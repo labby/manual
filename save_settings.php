@@ -30,8 +30,8 @@ require(WB_PATH.'/modules/admin.php');
 // This code removes any php tags and adds slashes
 $friendly = array('&lt;', '&gt;', '?php');
 $raw = array('<', '>', '');
-$header = $admin->add_slashes($admin->get_post('header'));
-$footer = $admin->add_slashes($admin->get_post('footer'));
+$header = addslashes($admin->get_post('header'));
+$footer = addslashes($admin->get_post('footer'));
 
 
 // Update settings

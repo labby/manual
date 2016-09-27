@@ -22,7 +22,7 @@
 */
 
 require('../../config.php');
-require(WB_PATH.'/framework/functions.php');
+require(WB_PATH.'/framework/summary.functions.php');
  
 $database = new database(DB_URL);
 

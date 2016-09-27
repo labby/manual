@@ -166,7 +166,7 @@ parent_list(0);
 <tr>
 	<td valign="top"><?php echo $TEXT['DESCRIPTION']; ?>:</td>
 	<td>
-		<textarea name="description" style="width: 100%; height: 50px;"><?php echo stripslashes($fetch_content['description']); ?></textarea>
+		<textarea id="no_wysiwyg" name="description" style="width: 100%; height: 50px;"><?php echo stripslashes($fetch_content['description']); ?></textarea>
 	</td>
 </tr>
 <tr>

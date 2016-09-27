@@ -43,7 +43,7 @@ if($admin->get_post('title') == '') {
 } else {
 	$title = addslashes($admin->get_post('title'));
 	$description = addslashes($admin->get_post('description'));
-	$content = $admin->add_slashes($admin->get_post('content'));
+	$content =addslashes($admin->get_post('content'));	
 	$parent = $admin->get_post('parent');
 	$old_parent = $admin->get_post('old_parent');
 	$active = $admin->get_post('active');
@@ -51,7 +51,7 @@ if($admin->get_post('title') == '') {
 	$position = $admin->get_post('position');
 	$modified_when = $admin->get_post('modified_when');
 	if(trim($modified_when) == '0' OR trim($modified_when) == '') {
-		$modified_when = mktime();
+		$modified_when = time();
 	} else {
 		$modified_when = jscalendar_to_timestamp($modified_when);
 		}
@@ -102,7 +102,7 @@ $page_link = $page['link'];
 $chapter_name = $page_link.'/';
 
 // Include WB functions file
-require(WB_PATH.'/framework/functions.php');
+require(WB_PATH.'/framework/summary.functions.php');
 
 // Work-out what the link should be
 if(page_filename($parent_title) != '') {
@@ -163,7 +163,7 @@ if(!is_writable(WB_PATH.PAGES_DIRECTORY.$chapter_name)) {
 }
 
 // Update row
-$database->query("UPDATE ".TABLE_PREFIX."mod_manual_chapters SET parent = '$parent', title = '$title', level = '$level', link = '$chapter_link', position = '$position', description = '$description', `content` = '$content', active = '$active', modified_when = '".mktime()."', modified_by = '".$admin->get_user_id()."' WHERE chapter_id = '$chapter_id'");
+$database->query("UPDATE ".TABLE_PREFIX."mod_manual_chapters SET parent = '$parent', title = '$title', level = '$level', link = '$chapter_link', position = '$position', description = '$description', `content` = '$content', active = '$active', modified_when = '".time()."', modified_by = '".$admin->get_user_id()."' WHERE chapter_id = '$chapter_id'");
 
 // Check if there is a db error, otherwise say successful
 if($database->is_error()) {

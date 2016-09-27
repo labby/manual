@@ -33,7 +33,7 @@ require(WB_PATH.'/modules/manual/class.order.php');
 $order = new order(TABLE_PREFIX.'mod_manual_chapters', 'position', 'chapter_id', 'parent', $section_id);
 $position = $order->get_new(0);
 
-$modified_when = mktime();
+$modified_when = time();
 $modified_by = $admin->get_user_id();
 
 // Insert new row into database
