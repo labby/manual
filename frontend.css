@@ -1,0 +1,107 @@
+.MLheader {
+  color: #999999;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.MLpage_header {
+  border-bottom: 1px solid #CCCCCC;
+  margin-top: 5px;
+}
+
+.MLtitle {
+  padding-bottom: 2px;
+  color: #666666;
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.MLdescription {
+  color: #666666;
+  padding-bottom: 2px;
+}
+
+ol.MLindex_table { 
+    list-style-type: none;
+    margin: 20px 0 0;
+    padding-left: 10px;
+}
+
+.MLindex_table ol { 
+  list-style-type: none;
+  margin: 0;
+  padding-left: 10px;
+}
+
+.MLchapter {
+    color: #666;
+    font-size: 17px;
+    font-weight: normal;
+    padding-bottom: 10px;
+}
+
+#MLchapt_lnk {
+    color: #333;
+    font-size: 18px;
+    font-weight: normal;
+}
+
+.MLsubchapt {
+  color: #666666;
+  font-size: 10px;
+  font-weight: bold;
+  padding-bottom:6px;
+}
+
+.MLsub2chapt {
+  color: #666666;
+  font-size: 9px;
+  font-weight: bold;
+}
+
+.MLIndex_bg {
+  background-color: #F0F0F0;
+}
+
+.MLupdated {
+  color: #969696;
+  font-size: 9px;
+  padding-bottom: 5px;
+  display:none;
+}
+
+.MLfooter {
+  color: #999999;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+#MLpage_chapt_lnk, #MLsubchapt_lnk, #MLsubchapt2_lnk {
+    color: #666666;
+    font-size: 17px;
+    font-weight: normal;
+    text-decoration: underline;
+}
+
+
+#MLprev_link_top, #MLnext_link_top, #MLindex_link_top {
+  color: #666666;
+  font-size: 11px;
+  font-weight: bold;
+}
+
+#MLprev_link_btm, #MLnext_link_btm, #MLindex_link_btm {
+  color: #666666;
+  font-size: 11px;
+  font-weight: bold;
+}
+
+#organe th {font-size:15px;}
+
+#organe .first {font-weight:bold; color:#666}
+
+/*** Don't remove the class nixhier, this is required for ASP ***/
+.nixhier {
+	display:none;
+}
+
