@@ -1,7 +1,7 @@
 # Manual
 
 ## Description
-Team is an addon for LEPTON CMS (2.x) to create a manual
+This is an addon for LEPTON CMS (2.x) to create a manual
 
 ## Support/Bugs
 Please report bugs on the LEPTON Addon Forum, where also support is available
