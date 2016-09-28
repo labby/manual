@@ -1,32 +1,41 @@
 <?php
 
-/*
+/**
+ *  @module         manual
+ *  @version        see info.php of this module
+ *  @authors        Ryan Djurovich, Chio Maisriml, Thomas Hornik, Dietrich Roland Pehlke
+ *  @copyright      2004-2016 Ryan Djurovich, Matthias Gallas, Uffe Christoffersen, pcwacht, Rob Smith, erpe(last)
+ *  @license        GNU General Public License
+ *  @license terms  see info.php of this module
+ *  @platform       see info.php of this module
+ *
+ */
 
- Website Baker Project <http://www.websitebaker.org/>
- Copyright (C) 2004-2006, Ryan Djurovich
-
- Website Baker is free software; you can redistribute it and/or modify
- it under the terms of the GNU General Public License as published by
- the Free Software Foundation; either version 2 of the License, or
- (at your option) any later version.
-
- Website Baker is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU General Public License for more details.
-
- You should have received a copy of the GNU General Public License
- along with Website Baker; if not, write to the Free Software
- Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-
-*/
+// include class.secure.php to protect this file and the whole CMS!
+if (defined('LEPTON_PATH')) {   
+   include(LEPTON_PATH.'/framework/class.secure.php');
+} else {
+   $oneback = "../";
+   $root = $oneback;
+   $level = 1;
+   while (($level < 10) && (!file_exists($root.'/framework/class.secure.php'))) {
+      $root .= $oneback;
+      $level += 1;
+   }
+   if (file_exists($root.'/framework/class.secure.php')) {
+      include($root.'/framework/class.secure.php');
+   } else {
+      trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
+   }
+}
+// end include class.secure.php
 
 // Load Language file
 if(LANGUAGE_LOADED) {
-	if(!file_exists(WB_PATH.'/modules/manual/languages/'.LANGUAGE.'.php')) {
-		require_once(WB_PATH.'/modules/manual/languages/EN.php');
+	if(!file_exists(LEPTON_PATH.'/modules/manual/languages/'.LANGUAGE.'.php')) {
+		require_once(LEPTON_PATH.'/modules/manual/languages/EN.php');
 	} else {
-		require_once(WB_PATH.'/modules/manual/languages/'.LANGUAGE.'.php');
+		require_once(LEPTON_PATH.'/modules/manual/languages/'.LANGUAGE.'.php');
 	}
 }
 
@@ -37,10 +46,10 @@ $database->query("DELETE FROM ".TABLE_PREFIX."mod_manual_chapters WHERE page_id 
 <table cellpadding="0" cellspacing="0" border="0" width="100%" style="border-bottom: 1px solid #AAAAAA;">
 <tr>
 	<td width="50%">
-		<input type="button" name="add_chapter" value="<?php echo $TEXT['ADD'].' '.$MLTEXT['CHAPTERS']; ?>" onclick="javascript: window.location = '<?php echo WB_URL; ?>/modules/manual/add_chapter.php?page_id=<?php echo $page_id; ?>&section_id=<?php echo $section_id; ?>';" style="width: 100%;" />	
+		<input type="button" name="add_chapter" value="<?php echo $TEXT['ADD'].' '.$MLTEXT['CHAPTERS']; ?>" onclick="javascript: window.location = '<?php echo LEPTON_URL; ?>/modules/manual/add_chapter.php?page_id=<?php echo $page_id; ?>&section_id=<?php echo $section_id; ?>';" style="width: 100%;" />	
 	</td>
 	<td>
-		<input type="button" name="settings" value="<?php echo $TEXT['SETTINGS']; ?>" onclick="javascript: window.location = '<?php echo WB_URL; ?>/modules/manual/modify_settings.php?page_id=<?php echo $page_id; ?>&section_id=<?php echo $section_id; ?>';" style="width: 100%;" />
+		<input type="button" name="settings" value="<?php echo $TEXT['SETTINGS']; ?>" onclick="javascript: window.location = '<?php echo LEPTON_URL; ?>/modules/manual/modify_settings.php?page_id=<?php echo $page_id; ?>&section_id=<?php echo $section_id; ?>';" style="width: 100%;" />
 	</td>
 </tr>
 </table>
@@ -68,12 +77,12 @@ if($num_chapters > 0) {
 		?>
 		<tr class="row_a">
 			<td width="20" style="padding-left: 5px;">
-				<a href="<?php echo WB_URL; ?>/modules/manual/modify_chapter.php?page_id=<?php echo $page_id; ?>&section_id=<?php echo $section_id; ?>&chapter_id=<?php echo $chapter['chapter_id']; ?>" title="<?php echo $TEXT['MODIFY']; ?>">
+				<a href="<?php echo LEPTON_URL; ?>/modules/manual/modify_chapter.php?page_id=<?php echo $page_id; ?>&section_id=<?php echo $section_id; ?>&chapter_id=<?php echo $chapter['chapter_id']; ?>" title="<?php echo $TEXT['MODIFY']; ?>">
 					<img src="<?php echo THEME_URL; ?>/images/modify_16.png" border="0" alt="Modify - " />
 				</a>
 			</td>
 			<td colspan="5">
-				<a href="<?php echo WB_URL; ?>/modules/manual/modify_chapter.php?page_id=<?php echo $page_id; ?>&section_id=<?php echo $section_id; ?>&chapter_id=<?php echo $chapter['chapter_id']; ?>" title="<?php echo $TEXT['MODIFY']; ?>">
+				<a href="<?php echo LEPTON_URL; ?>/modules/manual/modify_chapter.php?page_id=<?php echo $page_id; ?>&section_id=<?php echo $section_id; ?>&chapter_id=<?php echo $chapter['chapter_id']; ?>" title="<?php echo $TEXT['MODIFY']; ?>">
 					<?php echo $chapter['title']; ?>
 				</a>
 			</td>
@@ -82,14 +91,14 @@ if($num_chapters > 0) {
 			</td>
 			<td width="20">
 			<?php if($chapter['position'] != 1) { ?>
-				<a href="<?php echo WB_URL; ?>/modules/manual/move_up.php?page_id=<?php echo $page_id; ?>&section_id=<?php echo $section_id; ?>&chapter_id=<?php echo $chapter['chapter_id']; ?>" title="<?php echo $TEXT['MOVE_UP']; ?>">
+				<a href="<?php echo LEPTON_URL; ?>/modules/manual/move_up.php?page_id=<?php echo $page_id; ?>&section_id=<?php echo $section_id; ?>&chapter_id=<?php echo $chapter['chapter_id']; ?>" title="<?php echo $TEXT['MOVE_UP']; ?>">
 					<img src="<?php echo THEME_URL; ?>/images/up_16.png" border="0" alt="^" />
 				</a>
 			<?php } ?>
 			</td>
 			<td width="20">
 			<?php if($chapter['position'] != $num_chapters) { ?>
-				<a href="<?php echo WB_URL; ?>/modules/manual/move_down.php?page_id=<?php echo $page_id; ?>&section_id=<?php echo $section_id; ?>&chapter_id=<?php echo $chapter['chapter_id']; ?>" title="<?php echo $TEXT['MOVE_DOWN']; ?>">
+				<a href="<?php echo LEPTON_URL; ?>/modules/manual/move_down.php?page_id=<?php echo $page_id; ?>&section_id=<?php echo $section_id; ?>&chapter_id=<?php echo $chapter['chapter_id']; ?>" title="<?php echo $TEXT['MOVE_DOWN']; ?>">
 					<img src="<?php echo THEME_URL; ?>/images/down_16.png" border="0" alt="v" />
 				</a>
 			<?php } ?>
@@ -100,7 +109,7 @@ if($num_chapters > 0) {
 				$num_sub_chapters = $query_sub_chapters->numRows();
 				if($num_sub_chapters == 0) {
 				?>
-				<a href="javascript: confirm_link('<?php echo $TEXT['ARE_YOU_SURE']; ?>', '<?php echo WB_URL; ?>/modules/manual/delete_chapter.php?page_id=<?php echo $page_id; ?>&section_id=<?php echo $section_id; ?>&chapter_id=<?php echo $chapter['chapter_id']; ?>');" title="<?php echo $TEXT['DELETE']; ?>">
+				<a href="javascript: confirm_link('<?php echo $TEXT['ARE_YOU_SURE']; ?>', '<?php echo LEPTON_URL; ?>/modules/manual/delete_chapter.php?page_id=<?php echo $page_id; ?>&section_id=<?php echo $section_id; ?>&chapter_id=<?php echo $chapter['chapter_id']; ?>');" title="<?php echo $TEXT['DELETE']; ?>">
 					<img src="<?php echo THEME_URL; ?>/images/delete_16.png" border="0" alt="X" />
 				</a>
 				<?php
@@ -115,12 +124,12 @@ if($num_chapters > 0) {
 				<tr class="row_a">
 					<td width="20" align="center">-</td>
 					<td width="20" style="padding-left: 5px;">
-						<a href="<?php echo WB_URL; ?>/modules/manual/modify_chapter.php?page_id=<?php echo $page_id; ?>&section_id=<?php echo $section_id; ?>&chapter_id=<?php echo $chapter['chapter_id']; ?>" title="<?php echo $TEXT['MODIFY']; ?>">
+						<a href="<?php echo LEPTON_URL; ?>/modules/manual/modify_chapter.php?page_id=<?php echo $page_id; ?>&section_id=<?php echo $section_id; ?>&chapter_id=<?php echo $chapter['chapter_id']; ?>" title="<?php echo $TEXT['MODIFY']; ?>">
 							<img src="<?php echo THEME_URL; ?>/images/modify_16.png" border="0" alt="Modify - " />
 						</a>
 					</td>
 					<td colspan="4">
-						<a href="<?php echo WB_URL; ?>/modules/manual/modify_chapter.php?page_id=<?php echo $page_id; ?>&section_id=<?php echo $section_id; ?>&chapter_id=<?php echo $chapter['chapter_id']; ?>" title="<?php echo $TEXT['MODIFY']; ?>">
+						<a href="<?php echo LEPTON_URL; ?>/modules/manual/modify_chapter.php?page_id=<?php echo $page_id; ?>&section_id=<?php echo $section_id; ?>&chapter_id=<?php echo $chapter['chapter_id']; ?>" title="<?php echo $TEXT['MODIFY']; ?>">
 							<?php echo $chapter['title']; ?>
 						</a>
 					</td>
@@ -129,14 +138,14 @@ if($num_chapters > 0) {
 					</td>
 					<td width="20">
 					<?php if($chapter['position'] != 1) { ?>
-						<a href="<?php echo WB_URL; ?>/modules/manual/move_up.php?page_id=<?php echo $page_id; ?>&section_id=<?php echo $section_id; ?>&chapter_id=<?php echo $chapter['chapter_id']; ?>" title="<?php echo $TEXT['MOVE_UP']; ?>">
+						<a href="<?php echo LEPTON_URL; ?>/modules/manual/move_up.php?page_id=<?php echo $page_id; ?>&section_id=<?php echo $section_id; ?>&chapter_id=<?php echo $chapter['chapter_id']; ?>" title="<?php echo $TEXT['MOVE_UP']; ?>">
 							<img src="<?php echo THEME_URL; ?>/images/up_16.png" border="0" alt="^" />
 						</a>
 					<?php } ?>
 					</td>
 					<td width="20">
 					<?php if($chapter['position'] != $num_chapters) { ?>
-						<a href="<?php echo WB_URL; ?>/modules/manual/move_down.php?page_id=<?php echo $page_id; ?>&section_id=<?php echo $section_id; ?>&chapter_id=<?php echo $chapter['chapter_id']; ?>" title="<?php echo $TEXT['MOVE_DOWN']; ?>">
+						<a href="<?php echo LEPTON_URL; ?>/modules/manual/move_down.php?page_id=<?php echo $page_id; ?>&section_id=<?php echo $section_id; ?>&chapter_id=<?php echo $chapter['chapter_id']; ?>" title="<?php echo $TEXT['MOVE_DOWN']; ?>">
 							<img src="<?php echo THEME_URL; ?>/images/down_16.png" border="0" alt="v" />
 						</a>
 					<?php } ?>
@@ -147,7 +156,7 @@ if($num_chapters > 0) {
 				$num_sub2_chapters = $query_sub2_chapters->numRows();
 				if($num_sub2_chapters == 0) {
 				?>
-				<a href="javascript: confirm_link('<?php echo $TEXT['ARE_YOU_SURE']; ?>', '<?php echo WB_URL; ?>/modules/manual/delete_chapter.php?page_id=<?php echo $page_id; ?>&section_id=<?php echo $section_id; ?>&chapter_id=<?php echo $chapter['chapter_id']; ?>');" title="<?php echo $TEXT['DELETE']; ?>">
+				<a href="javascript: confirm_link('<?php echo $TEXT['ARE_YOU_SURE']; ?>', '<?php echo LEPTON_URL; ?>/modules/manual/delete_chapter.php?page_id=<?php echo $page_id; ?>&section_id=<?php echo $section_id; ?>&chapter_id=<?php echo $chapter['chapter_id']; ?>');" title="<?php echo $TEXT['DELETE']; ?>">
 					<img src="<?php echo THEME_URL; ?>/images/delete_16.png" border="0" alt="X" />
 				</a>
 				<?php
@@ -163,12 +172,12 @@ if($num_chapters > 0) {
 					<td width="20" align="center">-</td>
 					<td width="20" align="center">-</td>
 					<td width="20" style="padding-left: 5px;">
-						<a href="<?php echo WB_URL; ?>/modules/manual/modify_chapter.php?page_id=<?php echo $page_id; ?>&section_id=<?php echo $section_id; ?>&chapter_id=<?php echo $chapter['chapter_id']; ?>" title="<?php echo $TEXT['MODIFY']; ?>">
+						<a href="<?php echo LEPTON_URL; ?>/modules/manual/modify_chapter.php?page_id=<?php echo $page_id; ?>&section_id=<?php echo $section_id; ?>&chapter_id=<?php echo $chapter['chapter_id']; ?>" title="<?php echo $TEXT['MODIFY']; ?>">
 							<img src="<?php echo THEME_URL; ?>/images/modify_16.png" border="0" alt="Modify - " />
 						</a>
 					</td>
 					<td colspan ="3" align="left">
-						<a href="<?php echo WB_URL; ?>/modules/manual/modify_chapter.php?page_id=<?php echo $page_id; ?>&section_id=<?php echo $section_id; ?>&chapter_id=<?php echo $chapter['chapter_id']; ?>" title="<?php echo $TEXT['MODIFY']; ?>">
+						<a href="<?php echo LEPTON_URL; ?>/modules/manual/modify_chapter.php?page_id=<?php echo $page_id; ?>&section_id=<?php echo $section_id; ?>&chapter_id=<?php echo $chapter['chapter_id']; ?>" title="<?php echo $TEXT['MODIFY']; ?>">
 							<?php echo $chapter['title']; ?>
 						</a>
 					</td>
@@ -177,20 +186,20 @@ if($num_chapters > 0) {
 					</td>
 					<td width="20">
 					<?php if($chapter['position'] != 1) { ?>
-						<a href="<?php echo WB_URL; ?>/modules/manual/move_up.php?page_id=<?php echo $page_id; ?>&section_id=<?php echo $section_id; ?>&chapter_id=<?php echo $chapter['chapter_id']; ?>" title="<?php echo $TEXT['MOVE_UP']; ?>">
+						<a href="<?php echo LEPTON_URL; ?>/modules/manual/move_up.php?page_id=<?php echo $page_id; ?>&section_id=<?php echo $section_id; ?>&chapter_id=<?php echo $chapter['chapter_id']; ?>" title="<?php echo $TEXT['MOVE_UP']; ?>">
 							<img src="<?php echo THEME_URL; ?>/images/up_16.png" border="0" alt="^" />
 						</a>
 					<?php } ?>
 					</td>
 					<td width="20">
 					<?php if($chapter['position'] != $num_chapters) { ?>
-						<a href="<?php echo WB_URL; ?>/modules/manual/move_down.php?page_id=<?php echo $page_id; ?>&section_id=<?php echo $section_id; ?>&chapter_id=<?php echo $chapter['chapter_id']; ?>" title="<?php echo $TEXT['MOVE_DOWN']; ?>">
+						<a href="<?php echo LEPTON_URL; ?>/modules/manual/move_down.php?page_id=<?php echo $page_id; ?>&section_id=<?php echo $section_id; ?>&chapter_id=<?php echo $chapter['chapter_id']; ?>" title="<?php echo $TEXT['MOVE_DOWN']; ?>">
 							<img src="<?php echo THEME_URL; ?>/images/down_16.png" border="0" alt="v" />
 						</a>
 					<?php } ?>
 					</td>
 					<td width="20">
-						<a href="javascript: confirm_link('<?php echo $TEXT['ARE_YOU_SURE']; ?>', '<?php echo WB_URL; ?>/modules/manual/delete_chapter.php?page_id=<?php echo $page_id; ?>&section_id=<?php echo $section_id; ?>&chapter_id=<?php echo $chapter['chapter_id']; ?>');" title="<?php echo $TEXT['DELETE']; ?>">
+						<a href="javascript: confirm_link('<?php echo $TEXT['ARE_YOU_SURE']; ?>', '<?php echo LEPTON_URL; ?>/modules/manual/delete_chapter.php?page_id=<?php echo $page_id; ?>&section_id=<?php echo $section_id; ?>&chapter_id=<?php echo $chapter['chapter_id']; ?>');" title="<?php echo $TEXT['DELETE']; ?>">
 							<img src="<?php echo THEME_URL; ?>/images/delete_16.png" border="0" alt="X" />
 						</a>
 					</td>

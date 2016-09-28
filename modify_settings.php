@@ -1,41 +1,48 @@
 <?php
 
-/*
+/**
+ *  @module         manual
+ *  @version        see info.php of this module
+ *  @authors        Ryan Djurovich, Chio Maisriml, Thomas Hornik, Dietrich Roland Pehlke
+ *  @copyright      2004-2016 Ryan Djurovich, Matthias Gallas, Uffe Christoffersen, pcwacht, Rob Smith, erpe(last)
+ *  @license        GNU General Public License
+ *  @license terms  see info.php of this module
+ *  @platform       see info.php of this module
+ *
+ */
 
- Website Baker Project <http://www.websitebaker.org/>
- Copyright (C) 2004-2006, Ryan Djurovich
-
- Website Baker is free software; you can redistribute it and/or modify
- it under the terms of the GNU General Public License as published by
- the Free Software Foundation; either version 2 of the License, or
- (at your option) any later version.
-
- Website Baker is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU General Public License for more details.
-
- You should have received a copy of the GNU General Public License
- along with Website Baker; if not, write to the Free Software
- Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-
-*/
-
-require('../../config.php');
+// include class.secure.php to protect this file and the whole CMS!
+if (defined('LEPTON_PATH')) {   
+   include(LEPTON_PATH.'/framework/class.secure.php');
+} else {
+   $oneback = "../";
+   $root = $oneback;
+   $level = 1;
+   while (($level < 10) && (!file_exists($root.'/framework/class.secure.php'))) {
+      $root .= $oneback;
+      $level += 1;
+   }
+   if (file_exists($root.'/framework/class.secure.php')) {
+      include($root.'/framework/class.secure.php');
+   } else {
+      trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
+   }
+}
+// end include class.secure.php
 
 // Include WB admin wrapper script
-require(WB_PATH.'/modules/admin.php');
+require(LEPTON_PATH.'/modules/admin.php');
 
 // include core functions of WB 2.7 to edit the optional module CSS files (frontend.css, backend.css)
-@include_once(WB_PATH .'/framework/module.functions.php');
+include_once(LEPTON_PATH .'/framework/summary.module_edit_css.php');
 
 
 // Load Language file
 if(LANGUAGE_LOADED) {
-	if(!file_exists(WB_PATH.'/modules/manual/languages/'.LANGUAGE.'.php')) {
-		require_once(WB_PATH.'/modules/manual/languages/EN.php');
+	if(!file_exists(LEPTON_PATH.'/modules/manual/languages/'.LANGUAGE.'.php')) {
+		require_once(LEPTON_PATH.'/modules/manual/languages/EN.php');
 	} else {
-		require_once(WB_PATH.'/modules/manual/languages/'.LANGUAGE.'.php');
+		require_once(LEPTON_PATH.'/modules/manual/languages/'.LANGUAGE.'.php');
 	}
 }
 
@@ -44,19 +51,19 @@ $raw = array('<', '>');
 $friendly = array('&lt;', '&gt;');
 
 // check if backend.css file needs to be included into the <body></body> of modify.php
-if(!method_exists($admin, 'register_backend_modfiles') && file_exists(WB_PATH ."/modules/form/backend.css")) {
+if(!method_exists($admin, 'register_backend_modfiles') && file_exists(LEPTON_PATH ."/modules/form/backend.css")) {
 	echo '<style type="text/css">';
-	include(WB_PATH .'/modules/form/backend.css');
+	include(LEPTON_PATH .'/modules/form/backend.css');
 	echo "\n</style>\n";
 }
 
-if (!defined('WYSIWYG_EDITOR') OR WYSIWYG_EDITOR=="none" OR !file_exists(WB_PATH.'/modules/'.WYSIWYG_EDITOR.'/include.php')) {
+if (!defined('WYSIWYG_EDITOR') OR WYSIWYG_EDITOR=="none" OR !file_exists(LEPTON_PATH.'/modules/'.WYSIWYG_EDITOR.'/include.php')) {
 	function show_wysiwyg_editor($name,$id,$content,$width,$height) {
 		echo '<textarea name="'.$name.'" id="'.$id.'" style="width: '.$width.'; height: '.$height.';">'.$content.'</textarea>';
 	}
 } else {
 	$id_list=array("short","long");
-			require(WB_PATH.'/modules/'.WYSIWYG_EDITOR.'/include.php');
+			require(LEPTON_PATH.'/modules/'.WYSIWYG_EDITOR.'/include.php');
 }
 
 // Get header and footer
@@ -77,7 +84,7 @@ if(function_exists('edit_module_css')) {
 ?>
 
 
-<form name="modify" action="<?php echo WB_URL; ?>/modules/manual/save_settings.php" method="post" style="margin: 0;">
+<form name="modify" action="<?php echo LEPTON_URL; ?>/modules/manual/save_settings.php" method="post" style="margin: 0;">
 
 <input type="hidden" name="section_id" value="<?php echo $section_id; ?>">
 <input type="hidden" name="page_id" value="<?php echo $page_id; ?>">
