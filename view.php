@@ -4,7 +4,7 @@
  *  @module         manual
  *  @version        see info.php of this module
  *  @authors        Ryan Djurovich, Chio Maisriml, Thomas Hornik, Dietrich Roland Pehlke
- *  @copyright      2004-2016 Ryan Djurovich, Matthias Gallas, Uffe Christoffersen, pcwacht, Rob Smith, Aldus, erpe
+ *  @copyright      2004-2017 Ryan Djurovich, Matthias Gallas, Uffe Christoffersen, pcwacht, Rob Smith, Aldus, erpe
  *  @license        GNU General Public License
  *  @license terms  see info.php of this module
  *  @platform       see info.php of this module
@@ -30,13 +30,6 @@ if (defined('LEPTON_PATH')) {
 }
 // end include class.secure.php
 
-// check if frontend.css file needs to be included into the <body></body> of view.php
-if((!function_exists('register_frontend_modfiles') || !defined('MOD_FRONTEND_CSS_REGISTERED')) &&  file_exists(LEPTON_PATH .'/modules/manual/frontend.css')) {
-   echo '<style type="text/css">';
-   include(LEPTON_PATH .'/modules/manual/frontend.css');
-   echo "\n</style>\n";
-} 
-
 // Load Language file
 if(LANGUAGE_LOADED) {
 	if(!file_exists(LEPTON_PATH.'/modules/manual/languages/'.LANGUAGE.'.php')) {
@@ -47,9 +40,14 @@ if(LANGUAGE_LOADED) {
 }
 
 // Get Settings
-$query_settings = $database->query("SELECT * FROM ".TABLE_PREFIX."mod_manual_settings WHERE section_id = '$section_id' LIMIT 1");
-if($query_settings->numRows() > 0) {
-	$fetch_settings = $query_settings->fetchRow();
+$fetch_settings = array();
+$database->execute_query(
+	"SELECT * FROM `".TABLE_PREFIX."mod_manual_settings` WHERE `section_id` = ".$section_id,
+	true,
+	$fetch_settings,
+	false
+);
+if(count($fetch_settings) 0) {
 	$header = $fetch_settings['header'];
 	$footer = $fetch_settings['footer'];
 } else {

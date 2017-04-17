@@ -4,7 +4,7 @@
  *  @module         manual
  *  @version        see info.php of this module
  *  @authors        Ryan Djurovich, Chio Maisriml, Thomas Hornik, Dietrich Roland Pehlke
- *  @copyright      2004-2016 Ryan Djurovich, Matthias Gallas, Uffe Christoffersen, pcwacht, Rob Smith, Aldus, erpe
+ *  @copyright      2004-2017 Ryan Djurovich, Matthias Gallas, Uffe Christoffersen, pcwacht, Rob Smith, Aldus, erpe
  *  @license        GNU General Public License
  *  @license terms  see info.php of this module
  *  @platform       see info.php of this module
@@ -56,12 +56,13 @@ if($admin->get_post('title') == '') {
 	$active = $admin->get_post('active');
 	$old_link = $admin->get_post('link');
 	$position = $admin->get_post('position');
-	$modified_when = $admin->get_post('modified_when');
-	if(trim($modified_when) == '0' OR trim($modified_when) == '') {
+	$modified_when = trim( $admin->get_post('modified_when') );
+	
+	if( ( $modified_when == '0' ) OR ( $modified_when == '') ) {
 		$modified_when = time();
 	} else {
 		$modified_when = jscalendar_to_timestamp($modified_when);
-		}
+	}
 	$modified_by = $admin->get_post('modified_by'); 
 }
 
@@ -75,54 +76,79 @@ if($old_parent != $parent and $parent != '') {
 }
 
 // Get parent title and link (if there is a parent)
-if($parent != 0) {
-	$query_parent = $database->query("SELECT chapter_id,title,level,link FROM ".TABLE_PREFIX."mod_manual_chapters WHERE chapter_id = '$parent' LIMIT 1");
-	$fetch_parent = $query_parent->fetchRow();
+if($parent != 0)
+{
+	$fetch_parent = array();
+	$database->execute_query(
+		"SELECT `chapter_id`,`title`,`level`,`link` FROM `".TABLE_PREFIX."mod_manual_chapters` WHERE `chapter_id` = ".$parent,
+		true,
+		$fetch_parent,
+		false
+	);
 	$parent_title = $fetch_parent['title'];
 	$parent_link = $fetch_parent['link'];
 	$parent_id = $fetch_parent['chapter_id'];
 	$parent_level = $fetch_parent['level'];
-	$level = 1;
+	$level = 1;	// Aldus: ?
+	
 	// Check for second level?
-	if ($parent_level != 0 ) {
-		$query_parent = $database->query("SELECT chapter_id,title,level, link FROM ".TABLE_PREFIX."mod_manual_chapters WHERE chapter_id = '$parent_id' LIMIT 1");
-		$fetch_parent = $query_parent->fetchRow();
-		if ($parent != 0) {
-//			$parent_id = $fetch_parent['chapter_id'];
+	if ($parent_level != 0 )
+	{
+		$fetch_parent = array();
+		$database->execute_query(
+			"SELECT `chapter_id`,`title`,`level`, `link` FROM `".TABLE_PREFIX."mod_manual_chapters` WHERE `chapter_id` = ".$parent_id,
+			true,
+			$fetch_parent,
+			false
+		);
+		if ($parent != 0)
+		{
+			$parent_id = $fetch_parent['chapter_id'];
 			$parent_link = $fetch_parent['link'];
 			$parent_title2 = $fetch_parent['title'];
 			$level = 2;
 		}
 	}
 } else {
-	$parent_title = '';
+	$parent_title = '(no title)'; // [2017-04-17] aldus: hier!
 	$parent_link = '';
 	$parent_id = '';
 	$level = 0;
 }
 
 // Get page link URL
-$query_page = $database->query("SELECT level,link FROM ".TABLE_PREFIX."pages WHERE page_id = '$page_id'");
-$page = $query_page->fetchRow();
+$page = array();
+$database->execute_query(
+	"SELECT `level`,`link` FROM `".TABLE_PREFIX."pages` WHERE `page_id` = ".$page_id,
+	true,
+	$page,
+	false
+);
 $page_level = $page['level'];
-$page_link = $page['link'];
+$page_link	= $page['link'];
 $chapter_name = $page_link.'/';
 
-// Include WB functions file
-require(LEPTON_PATH.'/framework/summary.functions.php');
-
 // Work-out what the link should be
-if(page_filename($parent_title) != '') {
-	$chapter_link = $parent_link.'/'.page_filename($title);
+if(function_exists("save_filename"))
+{
+	$temp_filename = save_filename($parent_title);
 } else {
-	$chapter_link = $chapter_name.page_filename($title);
+	// backward compatible to L* < 2.4.x
+	$temp_filename = page_filename($parent_title);
+}
+
+if($temp_filename != '')
+{
+	$chapter_link = $parent_link."/".$temp_filename;
+} else {
+	$chapter_link = $chapter_name."/"; // [2017-04-17] Aldus: the $temp_filename is empty!
 }
 
 if(!file_exists(LEPTON_PATH.PAGES_DIRECTORY.$chapter_name)) {
 	mkdir(LEPTON_PATH.PAGES_DIRECTORY.$chapter_name);
 }
 // Create access dir for parent
-if(!file_exists(LEPTON_PATH.PAGES_DIRECTORY.$parent_link.'/') AND page_filename($parent_title) != '') {
+if(!file_exists(LEPTON_PATH.PAGES_DIRECTORY.$parent_link.'/') AND $temp_filename != '') {
 	mkdir(LEPTON_PATH.PAGES_DIRECTORY.$parent_link.'/');
 }
 
@@ -198,11 +224,16 @@ $page_id = '.$page_id.';
 $section_id = '.$section_id.';
 $chapter_id = '.$chapter_id.';
 define("CHAPTER_ID", $chapter_id);
-require("'.$index_location.'config.php");
+// require("'.$index_location.'config.php");
 require(LEPTON_PATH."/index.php");
 ?>';
 	$handle = fopen(LEPTON_PATH.$filename, 'w');
-	fwrite($handle, $file_content);
-	fclose($handle);
+	if($handle)
+	{
+		fwrite($handle, $file_content);
+		fclose($handle);
+	} else {
+		die("Problem with: ".$filename);
+	}
 }
 ?>

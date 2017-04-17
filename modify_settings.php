@@ -4,7 +4,7 @@
  *  @module         manual
  *  @version        see info.php of this module
  *  @authors        Ryan Djurovich, Chio Maisriml, Thomas Hornik, Dietrich Roland Pehlke
- *  @copyright      2004-2016 Ryan Djurovich, Matthias Gallas, Uffe Christoffersen, pcwacht, Rob Smith, Aldus, erpe
+ *  @copyright      2004-2017 Ryan Djurovich, Matthias Gallas, Uffe Christoffersen, pcwacht, Rob Smith, Aldus, erpe
  *  @license        GNU General Public License
  *  @license terms  see info.php of this module
  *  @platform       see info.php of this module
@@ -36,15 +36,9 @@ require(LEPTON_PATH.'/modules/admin.php');
 // include core functions of WB 2.7 to edit the optional module CSS files (frontend.css, backend.css)
 include_once(LEPTON_PATH .'/framework/summary.module_edit_css.php');
 
-
 // Load Language file
-if(LANGUAGE_LOADED) {
-	if(!file_exists(LEPTON_PATH.'/modules/manual/languages/'.LANGUAGE.'.php')) {
-		require_once(LEPTON_PATH.'/modules/manual/languages/EN.php');
-	} else {
-		require_once(LEPTON_PATH.'/modules/manual/languages/'.LANGUAGE.'.php');
-	}
-}
+$lang = (dirname(__FILE__))."/languages/". LANGUAGE .".php";
+require_once ( !file_exists($lang) ? (dirname(__FILE__))."/languages/EN.php" : $lang );
 
 // Set raw html <'s and >'s to be replace by friendly html code
 $raw = array('<', '>');
@@ -63,12 +57,18 @@ if (!defined('WYSIWYG_EDITOR') OR WYSIWYG_EDITOR=="none" OR !file_exists(LEPTON_
 	}
 } else {
 	$id_list=array("short","long");
-			require(LEPTON_PATH.'/modules/'.WYSIWYG_EDITOR.'/include.php');
+	require(LEPTON_PATH.'/modules/'.WYSIWYG_EDITOR.'/include.php');
 }
 
 // Get header and footer
-$query_content = $database->query("SELECT * FROM ".TABLE_PREFIX."mod_manual_settings WHERE section_id = '$section_id'");
-$fetch_content = $query_content->fetchRow();
+$fetch_content = array();
+$query_content = $database->execute_query(
+	"SELECT * FROM `".TABLE_PREFIX."mod_manual_settings` WHERE `section_id` = '$section_id'",
+	true,
+	$fetch_content,
+	false
+);
+
 $header = htmlspecialchars($fetch_content['header']);
 $footer = htmlspecialchars($fetch_content['footer']);
 
@@ -96,7 +96,7 @@ if(function_exists('edit_module_css')) {
 <tr>
 	<td>
 		<?php
-		show_wysiwyg_editor("header","header",$header,"100%","235px");
+		show_wysiwyg_editor("manual_header","manual_header",$header,"100%","235px");
 		?>
 	</td>
 </tr>
@@ -106,7 +106,7 @@ if(function_exists('edit_module_css')) {
 <tr>
 	<td>
 		<?php
-		show_wysiwyg_editor("footer","footer",$footer,"100%","235px");
+		show_wysiwyg_editor("manual_footer","manual_footer",$footer,"100%","235px");
 		?>
 	</td>
 </tr>
@@ -117,7 +117,7 @@ if(function_exists('edit_module_css')) {
 			<input name="save" type="submit" value="<?php echo $TEXT['SAVE']; ?>" style="width: 100px; margin-top: 5px;"></form>
 		</td>
 		<td align="right">
-			<input type="button" value="<?php echo $TEXT['CANCEL']; ?>" onclick="javascript: window.location = '<?php echo ADMIN_URL; ?>/pages/modify.php?page_id=<?php echo $page_id; ?>';" style="width: 100px; margin-top: 5px;" />
+			<input type="button" class="cancel" value="<?php echo $TEXT['CANCEL']; ?>" onclick="javascript: window.location = '<?php echo ADMIN_URL; ?>/pages/modify.php?page_id=<?php echo $page_id; ?>';" style="width: 100px; margin-top: 5px;" />
 		</td>
 	</tr>
 </table>
