@@ -75,6 +75,8 @@ if($old_parent != $parent and $parent != '') {
 	$position = $order->get_new($parent);
 }
 
+if($parent == "") $parent = 0;
+
 // Get parent title and link (if there is a parent)
 if($parent != 0)
 {
@@ -131,12 +133,11 @@ $chapter_name = $page_link.'/';
 // Work-out what the link should be
 if(function_exists("save_filename"))
 {
-	$temp_filename = save_filename($parent_title);
+	$temp_filename = save_filename($title);
 } else {
 	// backward compatible to L* < 2.4.x
-	$temp_filename = page_filename($parent_title);
+	$temp_filename = page_filename($title);
 }
-
 if($temp_filename != '')
 {
 	$chapter_link = $parent_link."/".$temp_filename;
@@ -148,7 +149,7 @@ if(!file_exists(LEPTON_PATH.PAGES_DIRECTORY.$chapter_name)) {
 	mkdir(LEPTON_PATH.PAGES_DIRECTORY.$chapter_name);
 }
 // Create access dir for parent
-if(!file_exists(LEPTON_PATH.PAGES_DIRECTORY.$parent_link.'/') AND $temp_filename != '') {
+if(!file_exists(LEPTON_PATH.PAGES_DIRECTORY.$parent_link.'/') AND $parent_link != '') {
 	mkdir(LEPTON_PATH.PAGES_DIRECTORY.$parent_link.'/');
 }
 
@@ -224,8 +225,8 @@ $page_id = '.$page_id.';
 $section_id = '.$section_id.';
 $chapter_id = '.$chapter_id.';
 define("CHAPTER_ID", $chapter_id);
-// require("'.$index_location.'config.php");
-require(LEPTON_PATH."/index.php");
+require "'.$index_location.'config.php";
+require LEPTON_PATH."/index.php";
 ?>';
 	$handle = fopen(LEPTON_PATH.$filename, 'w');
 	if($handle)
