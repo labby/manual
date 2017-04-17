@@ -47,7 +47,7 @@ $database->execute_query(
 	$fetch_settings,
 	false
 );
-if(count($fetch_settings) 0) {
+if(count($fetch_settings) > 0) {
 	$header = $fetch_settings['header'];
 	$footer = $fetch_settings['footer'];
 } else {
