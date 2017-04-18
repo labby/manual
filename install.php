@@ -4,7 +4,7 @@
  *  @module         manual
  *  @version        see info.php of this module
  *  @authors        Ryan Djurovich, Chio Maisriml, Thomas Hornik, Dietrich Roland Pehlke
- *  @copyright      2004-2016 Ryan Djurovich, Matthias Gallas, Uffe Christoffersen, pcwacht, Rob Smith, Aldus, erpe
+ *  @copyright      2004-2017 Ryan Djurovich, Matthias Gallas, Uffe Christoffersen, pcwacht, Rob Smith, Aldus, erpe
  *  @license        GNU General Public License
  *  @license terms  see info.php of this module
  *  @platform       see info.php of this module
@@ -65,11 +65,7 @@ if(defined('LEPTON_URL')) {
 	// Query end
 	$query_end_code = "";	
 	$database->query("INSERT INTO ".TABLE_PREFIX."search (name,value,extra) VALUES ('query_end', '$query_end_code', 'manual')");
-	
-	// Insert blank row (there needs to be at least on row for the search to work)
-	$database->query("INSERT INTO ".TABLE_PREFIX."mod_manual_chapters (page_id,section_id) VALUES ('0','0')");
-	$database->query("INSERT INTO ".TABLE_PREFIX."mod_manual_settings (page_id,section_id) VALUES ('0','0')");
-	
+		
 }
 
 ?>

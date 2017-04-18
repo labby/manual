@@ -4,7 +4,7 @@
  *  @module         manual
  *  @version        see info.php of this module
  *  @authors        Ryan Djurovich, Chio Maisriml, Thomas Hornik, Dietrich Roland Pehlke
- *  @copyright      2004-2016 Ryan Djurovich, Matthias Gallas, Uffe Christoffersen, pcwacht, Rob Smith, Aldus, erpe
+ *  @copyright      2004-2017 Ryan Djurovich, Matthias Gallas, Uffe Christoffersen, pcwacht, Rob Smith, Aldus, erpe
  *  @license        GNU General Public License
  *  @license terms  see info.php of this module
  *  @platform       see info.php of this module
@@ -30,26 +30,20 @@ if (defined('LEPTON_PATH')) {
 }
 // end include class.secure.php
 
-// check if frontend.css file needs to be included into the <body></body> of view.php
-if((!function_exists('register_frontend_modfiles') || !defined('MOD_FRONTEND_CSS_REGISTERED')) &&  file_exists(LEPTON_PATH .'/modules/manual/frontend.css')) {
-   echo '<style type="text/css">';
-   include(LEPTON_PATH .'/modules/manual/frontend.css');
-   echo "\n</style>\n";
-} 
+//	Load Language file
+$lang = (dirname(__FILE__))."/languages/". LANGUAGE .".php";
+require_once ( !file_exists($lang) ? (dirname(__FILE__))."/languages/EN.php" : $lang );
 
-// Load Language file
-if(LANGUAGE_LOADED) {
-	if(!file_exists(LEPTON_PATH.'/modules/manual/languages/'.LANGUAGE.'.php')) {
-		require_once(LEPTON_PATH.'/modules/manual/languages/EN.php');
-	} else {
-		require_once(LEPTON_PATH.'/modules/manual/languages/'.LANGUAGE.'.php');
-	}
-}
 
 // Get Settings
-$query_settings = $database->query("SELECT * FROM ".TABLE_PREFIX."mod_manual_settings WHERE section_id = '$section_id' LIMIT 1");
-if($query_settings->numRows() > 0) {
-	$fetch_settings = $query_settings->fetchRow();
+$fetch_settings = array();
+$database->execute_query(
+	"SELECT * FROM `".TABLE_PREFIX."mod_manual_settings` WHERE `section_id` = ".$section_id,
+	true,
+	$fetch_settings,
+	false
+);
+if(count($fetch_settings) > 0) {
 	$header = $fetch_settings['header'];
 	$footer = $fetch_settings['footer'];
 } else {
@@ -57,24 +51,33 @@ if($query_settings->numRows() > 0) {
 	$footer = '';
 }		
 
+$oManual = manual::getInstance();
+$all_chapters = $oManual->get_manual_by_sectionID( $section_id );
+	
 // Check if we should show the "contents" page or the actual chapter
 if(defined('CHAPTER_ID')) {
 
 	// Get chapter content
-	$get_content = $database->query("SELECT * FROM ".TABLE_PREFIX."mod_manual_chapters WHERE chapter_id = '".CHAPTER_ID."'");
-	$fetch_content = $get_content->fetchRow();
-	$title = stripslashes($fetch_content['title']);
-	$description = stripslashes($fetch_content['description']);
-	$content = $fetch_content['content'];
+	$fetch_content = array();
+	$database->execute_query(
+		"SELECT * FROM `".TABLE_PREFIX."mod_manual_chapters` WHERE `chapter_id` = ".CHAPTER_ID,
+		true,
+		$fetch_content,
+		false
+	);
+	
+	$title 			= stripslashes($fetch_content['title']);
+	$description	= stripslashes($fetch_content['description']);
+	$content		= $fetch_content['content'];
 	$wb->preprocess($content);
-	$parent = $fetch_content['parent'];
-	$level = $fetch_content['level'];
-	$position = $fetch_content['position'];
-	$modified_when = $fetch_content['modified_when'];
-	$modified_by = $fetch_content['modified_by'];
+	$parent 		= $fetch_content['parent'];
+	$level 			= $fetch_content['level'];
+	$position 		= $fetch_content['position'];
+	$modified_when	= $fetch_content['modified_when'];
+	$modified_by 	= $fetch_content['modified_by'];
 	
 	// Get number of chapters
-	$get_num_chapters = $database->query("SELECT chapter_id FROM ".TABLE_PREFIX."mod_manual_chapters WHERE section_id = '$section_id' AND parent = '$parent'");
+	$get_num_chapters = $database->query("SELECT `chapter_id` FROM `".TABLE_PREFIX."mod_manual_chapters` WHERE `section_id` = '".$section_id."' AND parent = '".$parent."'");
 	$num_chapters = $get_num_chapters->numRows();
 
 	// Get sub chapters
@@ -200,7 +203,7 @@ if(defined('CHAPTER_ID')) {
 		while($chapter = $query_subs->fetchRow()) {
 			?>
 			<li class="MLchapter">
-				<a ID="MLpage_chapt_lnk" href="<?php echo page_link($chapter['link']); ?>">
+				<a ID="MLpage_chapt_lnk" href="<?php echo page_link($chapter['link']); ?>
 					<?php echo stripslashes($chapter['title']); ?>
 				</a>
 				<?php
@@ -230,9 +233,20 @@ if(defined('CHAPTER_ID')) {
 	}
 	?>
 	<font class="MLupdated">
+	<?php 
+		$oDate = lib_lepton::getToolInstance("datetools");
+		$oDate->set_core_language( LANGUAGE );
+		
+		$oDate->setFormat( $oDate->CORE_date_formats[ DATE_FORMAT ] );
+		$modify_when_date = $oDate->toHTML( $modified_when );
+		
+		$oDate->setFormat( $oDate->CORE_time_formats[ TIME_FORMAT ] );
+		$modify_when_time = $oDate->toHTML( $modified_when );
+		
+	?>
 	<?php echo $MLTEXT['LASTUPDATED']; ?>&nbsp;<?php echo $modified_user; ?>&nbsp;
-	<?php echo $MLTEXT['ON']; ?>&nbsp;<?php echo gmdate(DATE_FORMAT, $modified_when+TIMEZONE); ?>&nbsp;
-	<?php echo $MLTEXT['AT']; ?>&nbsp;<?php echo gmdate(TIME_FORMAT, $modified_when+TIMEZONE); ?>
+	<?php echo $MLTEXT['ON']; ?>&nbsp;<?php echo $modify_when_date; ?>&nbsp;
+	<?php echo $MLTEXT['AT']; ?>&nbsp;<?php echo $modify_when_time; ?>
 	</font>
 	<br />
 	<table class="MLIndex_bg" cellpadding="0" cellspacing="0" border="0" width="99%">
@@ -275,8 +289,23 @@ if(defined('CHAPTER_ID')) {
 		while($chapter = $get_chapters->fetchRow()) {
 			?>
 			<li class="MLchapter">
-				<a ID="MLchapt_lnk" href="<?php echo page_link($chapter['link']); ?>">
-					<?php echo stripslashes($chapter['title']); ?>
+				<a ID="MLchapt_lnk" href="<?php 
+					// get the root:
+					$temp_root="";
+					$temp_parent = $chapter['parent'];
+					while($temp_parent != 0)
+					{
+						$temp_root = $all_chapters[ $temp_parent ]['link'].$temp_root;
+						$temp_parent = $all_chapters[ $temp_parent ]['parent'];
+					}
+
+					echo page_link( $wb->page['link'].$temp_root.$chapter['link']);
+					
+					?>">
+					<?php
+					echo stripslashes($chapter['title']);
+					// echo LEPTON_tools::display($wb);
+					?>
 				</a>
 				<?php
 				$description = stripslashes($chapter['description']);
@@ -295,7 +324,19 @@ if(defined('CHAPTER_ID')) {
 				while($chapter = $get_sub_chapters->fetchRow()) {
 					?>
 					<li class="MLsubchapt">
-						<a ID="MLsubchapt_lnk" href="<?php echo page_link($chapter['link']); ?>">
+						<a ID="MLsubchapt_lnk" href="<?php
+							// get the root:
+					$temp_root="";
+					$temp_parent = $chapter['parent'];
+					while($temp_parent != 0)
+					{
+						$temp_root = $all_chapters[ $temp_parent ]['link'].$temp_root;
+						$temp_parent = $all_chapters[ $temp_parent ]['parent'];
+					}
+
+					echo page_link( $wb->page['link'].$temp_root.$chapter['link']);
+							
+							?>">
 							<?php echo stripslashes($chapter['title']); ?>
 						</a>
 						<?php

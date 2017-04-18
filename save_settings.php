@@ -4,7 +4,7 @@
  *  @module         manual
  *  @version        see info.php of this module
  *  @authors        Ryan Djurovich, Chio Maisriml, Thomas Hornik, Dietrich Roland Pehlke
- *  @copyright      2004-2016 Ryan Djurovich, Matthias Gallas, Uffe Christoffersen, pcwacht, Rob Smith, Aldus, erpe
+ *  @copyright      2004-2017 Ryan Djurovich, Matthias Gallas, Uffe Christoffersen, pcwacht, Rob Smith, Aldus, erpe
  *  @license        GNU General Public License
  *  @license terms  see info.php of this module
  *  @platform       see info.php of this module
@@ -34,15 +34,18 @@ if (defined('LEPTON_PATH')) {
 $update_when_modified = true; // Tells script to update when this page was last updated
 require(LEPTON_PATH.'/modules/admin.php');
 
-// This code removes any php tags and adds slashes
-$friendly = array('&lt;', '&gt;', '?php');
-$raw = array('<', '>', '');
-$header = addslashes($admin->get_post('header'));
-$footer = addslashes($admin->get_post('footer'));
-
-
 // Update settings
-$database->query("UPDATE ".TABLE_PREFIX."mod_manual_settings SET header = '$header', footer = '$footer' WHERE section_id = '$section_id'");
+$fields = array(
+	'header'	=> addslashes($admin->get_post('manual_header')),
+	'footer'	=> addslashes($admin->get_post('manual_footer'))
+);
+	
+$database->build_and_execute(
+	"update",
+	TABLE_PREFIX."mod_manual_settings",
+	$fields,
+	"`section_id`='".$section_id."'"
+);
 
 // Check if there is a db error, otherwise say successful
 if($database->is_error()) {

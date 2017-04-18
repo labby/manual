@@ -4,7 +4,7 @@
  *  @module         manual
  *  @version        see info.php of this module
  *  @authors        Ryan Djurovich, Chio Maisriml, Thomas Hornik, Dietrich Roland Pehlke
- *  @copyright      2004-2016 Ryan Djurovich, Matthias Gallas, Uffe Christoffersen, pcwacht, Rob Smith, Aldus, erpe
+ *  @copyright      2004-2017 Ryan Djurovich, Matthias Gallas, Uffe Christoffersen, pcwacht, Rob Smith, Aldus, erpe
  *  @license        GNU General Public License
  *  @license terms  see info.php of this module
  *  @platform       see info.php of this module
@@ -30,17 +30,16 @@ if (defined('LEPTON_PATH')) {
 }
 // end include class.secure.php
 
-// Load Language file
-if(LANGUAGE_LOADED) {
-	if(!file_exists(LEPTON_PATH.'/modules/manual/languages/'.LANGUAGE.'.php')) {
-		require_once(LEPTON_PATH.'/modules/manual/languages/EN.php');
-	} else {
-		require_once(LEPTON_PATH.'/modules/manual/languages/'.LANGUAGE.'.php');
-	}
-}
+//	Load Language file
+$lang = (dirname(__FILE__))."/languages/". LANGUAGE .".php";
+require_once ( !file_exists($lang) ? (dirname(__FILE__))."/languages/EN.php" : $lang );
 
-//removes empty entries from the table so they will not be displayed
-$database->query("DELETE FROM ".TABLE_PREFIX."mod_manual_chapters WHERE page_id = '$page_id' and title=''");
+//	removes empty entries from the table so they will not be displayed
+$database->simple_query(
+	"DELETE FROM `".TABLE_PREFIX."mod_manual_chapters` WHERE `page_id` = '?' and title=''",
+	array($page_id)
+);
+
 ?>
 
 <table cellpadding="0" cellspacing="0" border="0" width="100%" style="border-bottom: 1px solid #AAAAAA;">
@@ -55,8 +54,15 @@ $database->query("DELETE FROM ".TABLE_PREFIX."mod_manual_chapters WHERE page_id 
 </table>
 <h2><?php echo $TEXT['MODIFY'].'/'.$TEXT['DELETE'].' '.$MLTEXT['CHAPTERS']; ?></h2>
 <?php
-$query_chapters = $database->query("SELECT * FROM ".TABLE_PREFIX."mod_manual_chapters WHERE parent = 0 AND section_id = '$section_id' ORDER BY position ASC");
-$num_chapters = $query_chapters->numRows();
+$all_chapters = array();
+$database->execute_query(
+	"SELECT * FROM `".TABLE_PREFIX."mod_manual_chapters` WHERE `parent` = 0 AND section_id = ".$section_id." ORDER BY position ASC",
+	true,
+	$all_chapters,
+	true
+);
+$num_chapters = count($all_chapters);
+
 if($num_chapters > 0) {
 	?>
 	<table cellpadding="2" cellspacing="0" border="0" width="100%">
@@ -73,7 +79,8 @@ if($num_chapters > 0) {
 		<td width="20"></td>
 	</tr>
 	<?php
-	while($chapter = $query_chapters->fetchRow()) {
+	foreach($all_chapters as &$chapter)
+	{
 		?>
 		<tr class="row_a">
 			<td width="20" style="padding-left: 5px;">

@@ -4,7 +4,7 @@
  *  @module         manual
  *  @version        see info.php of this module
  *  @authors        Ryan Djurovich, Chio Maisriml, Thomas Hornik, Dietrich Roland Pehlke
- *  @copyright      2004-2016 Ryan Djurovich, Matthias Gallas, Uffe Christoffersen, pcwacht, Rob Smith, Aldus, erpe
+ *  @copyright      2004-2017 Ryan Djurovich, Matthias Gallas, Uffe Christoffersen, pcwacht, Rob Smith, Aldus, erpe
  *  @license        GNU General Public License
  *  @license terms  see info.php of this module
  *  @platform       see info.php of this module
@@ -37,13 +37,6 @@ if (defined('LEPTON_PATH')) {
    }
 }
 // end include class.secure.php
-
-define('ORDERING_CLASS_LOADED', true);
-
-// Load the other required class files if they are not already loaded
-if(!defined('DATABASE_CLASS_LOADED')) {
-	require_once(LEPTON_PATH."/framework/class.database.php");
-}
 
 class order {
 	
