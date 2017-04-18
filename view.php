@@ -233,9 +233,20 @@ if(defined('CHAPTER_ID')) {
 	}
 	?>
 	<font class="MLupdated">
+	<?php 
+		$oDate = lib_lepton::getToolInstance("datetools");
+		$oDate->set_core_language( LANGUAGE );
+		
+		$oDate->setFormat( $oDate->CORE_date_formats[ DATE_FORMAT ] );
+		$modify_when_date = $oDate->toHTML( $modified_when );
+		
+		$oDate->setFormat( $oDate->CORE_time_formats[ TIME_FORMAT ] );
+		$modify_when_time = $oDate->toHTML( $modified_when );
+		
+	?>
 	<?php echo $MLTEXT['LASTUPDATED']; ?>&nbsp;<?php echo $modified_user; ?>&nbsp;
-	<?php echo $MLTEXT['ON']; ?>&nbsp;<?php echo gmdate(DATE_FORMAT, $modified_when+TIMEZONE); ?>&nbsp;
-	<?php echo $MLTEXT['AT']; ?>&nbsp;<?php echo gmdate(TIME_FORMAT, $modified_when+TIMEZONE); ?>
+	<?php echo $MLTEXT['ON']; ?>&nbsp;<?php echo $modify_when_date; ?>&nbsp;
+	<?php echo $MLTEXT['AT']; ?>&nbsp;<?php echo $modify_when_time; ?>
 	</font>
 	<br />
 	<table class="MLIndex_bg" cellpadding="0" cellspacing="0" border="0" width="99%">

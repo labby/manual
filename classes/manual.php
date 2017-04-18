@@ -38,7 +38,7 @@ class manual
     	$database = LEPTON_database::getInstance();
     	$all = array();
     	$database->execute_query(
-    		"SELECT * FROM `".TABLE_PREFIX."mod_manual_chapters` WHERE `section_id`=".$iSecId,
+    		"SELECT * FROM `".TABLE_PREFIX."mod_manual_chapters` WHERE `section_id`=".$iSecId." ORDER BY `parent`,`position`",
     		true,
     		$all,
     		true

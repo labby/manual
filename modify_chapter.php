@@ -91,7 +91,7 @@ if (!defined('WYSIWYG_EDITOR') OR WYSIWYG_EDITOR=="none" OR !file_exists(LEPTON_
 function parent_list($parent, $deep=0) {
 	global $all_chapters, $chapter_id, $fetch_content;
 	$subchapter_marker = "";
-	for($i=0; $i< $deep; $i++) $subchapter_marker .= "-";
+	for($i=0; $i< $deep; $i++) $subchapter_marker .= "- ";
 	
 	foreach($all_chapters as $key=>$val ){
 		
@@ -99,7 +99,7 @@ function parent_list($parent, $deep=0) {
 		
 		if($parent == $val['parent'])
 		{
-			echo "\n<option value='".$key."' ".( ($key == $chapter_id) ? " disabled='disabled' " : "").( ($key == $fetch_content['parent']) ? " selected='selected' " : ""  ).">".$subchapter_marker." ".$val['title']."</option>\n";
+			echo "\n<option value='".$key."' ".( ($key == $chapter_id) ? " disabled='disabled' " : "").( ($key == $fetch_content['parent']) ? " selected='selected' " : ""  ).">".$subchapter_marker.$val['title']."</option>\n";
 		
 			if($deep < 3)
 			{
