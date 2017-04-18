@@ -99,6 +99,26 @@ if($parent > 0)
 	$oManual->test_root( LEPTON_PATH.PAGES_DIRECTORY.$page_link.$temp_root ); // !
 }
 
+/**
+ *	looks a little bit oversized, but we've to look also to the "old" parent root!
+ *
+ */
+if($parent === $origin_data['parent'])
+{
+	$temp_root_origin = $temp_root;
+
+} else {
+	// parent has changed!
+	$temp_parent_origin = $origin_data['parent'];
+	$temp_root_origin = "";
+	while($temp_parent_origin != 0)
+	{
+		$temp_root_origin = $all_chapters[ $temp_parent_origin ]['link'].$temp_root_origin;
+		$temp_parent_origin = $all_chapters[ $temp_parent_origin ]['parent'];
+	}
+
+}
+
 // Work-out what the link should be
 if(function_exists("save_filename"))
 {
@@ -112,9 +132,9 @@ if(function_exists("save_filename"))
 $full_filepath = LEPTON_PATH.PAGES_DIRECTORY.$page_link.$temp_root."/".$temp_filename.".php";
 
 // has the filename changed?
-if($origin_data['link'] != "/".$temp_filename)
+if( ($origin_data['link'] != "/".$temp_filename) && ( $origin_data['link'] != "/" ) )
 {
-	$look_up = LEPTON_PATH.PAGES_DIRECTORY.$page_link.$temp_root.$origin_data['link'].".php";
+	$look_up = LEPTON_PATH.PAGES_DIRECTORY.$page_link.$temp_root_origin.$origin_data['link'].".php";
 	if(file_exists($look_up))
 	{
 		rename(
@@ -123,7 +143,7 @@ if($origin_data['link'] != "/".$temp_filename)
 		);
 	}
 	//	also the associated directory?
-	$look_up = LEPTON_PATH.PAGES_DIRECTORY.$page_link.$temp_root.$origin_data['link'];
+	$look_up = LEPTON_PATH.PAGES_DIRECTORY.$page_link.$temp_root_origin.$origin_data['link'];
 	if(file_exists($look_up))
 	{
 		rename(

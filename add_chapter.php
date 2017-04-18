@@ -48,7 +48,8 @@ $fields = array(
 	'parent'	=> 0, // as we generate a new one we've got no parent at this time!
 	'active'	=> 1, // the new chapter is active by default
 	'modified_when'	=> time(), // current time
-	'modified_by'	=> $admin->get_user_id()
+	'modified_by'	=> $admin->get_user_id(),
+	'link'			=> "/"	// !
 );
 
 $database->build_and_execute(
