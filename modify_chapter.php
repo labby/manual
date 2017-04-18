@@ -74,8 +74,6 @@ if (!defined('WYSIWYG_EDITOR') OR WYSIWYG_EDITOR=="none" OR !file_exists(LEPTON_
 <input type="hidden" name="position" value="<?php echo $fetch_content['position']; ?>">
 <input type="hidden" name="old_parent" value="<?php echo $fetch_content['parent']; ?>">
 
-
-
 <table cellpadding="4" cellspacing="0" border="0" width="100%">
 <tr>
 	<td width="80"><?php echo $TEXT['TITLE']; ?>:</td>
@@ -89,21 +87,28 @@ if (!defined('WYSIWYG_EDITOR') OR WYSIWYG_EDITOR=="none" OR !file_exists(LEPTON_
 		<select name="parent" style="width: 100%;">
 			<option value=""><?php echo $TEXT['NONE']; ?></option>
 			<?php
+
 function parent_list($parent, $deep=0) {
 	global $all_chapters, $chapter_id, $fetch_content;
-	foreach($all_chapters as $key=>$val ){
+	$subchapter_marker = "";
+	for($i=0; $i< $deep; $i++) $subchapter_marker .= "-";
 	
+	foreach($all_chapters as $key=>$val ){
+		
+		if($key == $parent) continue;
+		
 		if($parent == $val['parent'])
 		{
-			echo "\n<option value='".$key."' ".( ($key == $chapter_id) ? " disabled='disabled' " : "").( ($key == $fetch_content['parent']) ? " selected='selected' " : ""  ).">".$val['title']."</option>\n";
-		}
-		if($deep < 4)
-		{
-			parent_list($val['chapter_id'], $deep+1);
+			echo "\n<option value='".$key."' ".( ($key == $chapter_id) ? " disabled='disabled' " : "").( ($key == $fetch_content['parent']) ? " selected='selected' " : ""  ).">".$subchapter_marker." ".$val['title']."</option>\n";
+		
+			if($deep < 3)
+			{
+				parent_list( $val['chapter_id'], $deep+1);
+			}
 		}
 	}
 }
-parent_list(0);
+parent_list(0,1);
 			?>
 		</select>
 	</td>
