@@ -34,16 +34,20 @@ if (defined('LEPTON_PATH')) {
 if(!isset($_GET['chapter_id']) OR !is_numeric($_GET['chapter_id'])) {
 	header("Location: ".ADMIN_URL."/pages/index.php");
 } else {
-	$chapter_id = $_GET['chapter_id'];
+	$chapter_id = ($_GET['chapter_id']);
 }
 
 // Include WB admin wrapper script
 require(LEPTON_PATH.'/modules/admin.php');
 
-// Get header and footer
-$query_content = $database->query("SELECT * FROM ".TABLE_PREFIX."mod_manual_chapters WHERE chapter_id = '$chapter_id'");
-$fetch_content = $query_content->fetchRow();
-$chapter_id = $fetch_content['chapter_id'];
+$oManual = manual::getInstance();
+$all_chapters = $oManual->get_manual_by_sectionID( $section_id );
+// die(LEPTON_tools::display($all_chapters));
+	
+// Get current values for this chapter-id
+$fetch_content = $all_chapters[ $chapter_id ];
+
+// $chapter_id = $fetch_content['chapter_id'];
 $content = (htmlspecialchars($fetch_content['content']));
 
 if (!defined('WYSIWYG_EDITOR') OR WYSIWYG_EDITOR=="none" OR !file_exists(LEPTON_PATH.'/modules/'.WYSIWYG_EDITOR.'/include.php')) {
@@ -52,7 +56,7 @@ if (!defined('WYSIWYG_EDITOR') OR WYSIWYG_EDITOR=="none" OR !file_exists(LEPTON_
 	}
 } else {
 	$id_list=array("content");
-			require(LEPTON_PATH.'/modules/'.WYSIWYG_EDITOR.'/include.php');
+	require(LEPTON_PATH.'/modules/'.WYSIWYG_EDITOR.'/include.php');
 }
 ?>
 
@@ -69,26 +73,8 @@ if (!defined('WYSIWYG_EDITOR') OR WYSIWYG_EDITOR=="none" OR !file_exists(LEPTON_
 <input type="hidden" name="link" value="<?php echo $fetch_content['link']; ?>">
 <input type="hidden" name="position" value="<?php echo $fetch_content['position']; ?>">
 <input type="hidden" name="old_parent" value="<?php echo $fetch_content['parent']; ?>">
-<?php
-// Get if current chapter is parent?
-$current_level = '0'; // Asume no children
-$chapter_parent2 = $chapter_parent = 0;
-$query = "SELECT * FROM ".TABLE_PREFIX."mod_manual_chapters  WHERE parent = '$chapter_id'";
-$get_chapters = $database->query($query);
-$get_chapter = $get_chapters->fetchRow();
-$chapter_parent = $get_chapter['chapter_id'];
-if ($chapter_parent!=0) {
-	$current_level = '1'; // Asume 1 children
-	// Is parent allso parent?
-	$query = "SELECT * FROM ".TABLE_PREFIX."mod_manual_chapters  WHERE parent = '$chapter_parent'";
-	$get_chapters = $database->query($query);
-	$get_chapter = $get_chapters->fetchRow();
-	$chapter_parent2 = $get_chapter['chapter_id'];
-	if ($chapter_parent2!=0) {
- 		$current_level = '2';
-	}
-}
-?>
+
+
 
 <table cellpadding="4" cellspacing="0" border="0" width="100%">
 <tr>
@@ -103,23 +89,17 @@ if ($chapter_parent!=0) {
 		<select name="parent" style="width: 100%;">
 			<option value=""><?php echo $TEXT['NONE']; ?></option>
 			<?php
-function parent_list($parent) {
-	global $admin, $database, $section_id, $fetch_content, $current_level;
-	$query = "SELECT * FROM ".TABLE_PREFIX."mod_manual_chapters  WHERE parent = '$parent' AND active = '1' AND section_id = '$section_id' AND title != '' ORDER BY position ASC";
-	$get_chapters = $database->query($query);
-	while($chapter = $get_chapters->fetchRow()) {
-		// Stop users from adding pages with a level of more than the set page level limit
-		if($chapter['level']+1 < (3-$current_level) ) { // CHAPTER_LEVEL_LIMIT
-			// Title -'s prefix
-			$title_prefix = '';
-			for($i = 1; $i <= $chapter['level']; $i++) { $title_prefix .= ' - '; }
-				if ($fetch_content['chapter_id'] <> $chapter['chapter_id']) {
-					$title = $title_prefix.$chapter['title'];
-					echo '<option value="'.$chapter['chapter_id'].'"';
-					if($fetch_content['parent'] == $chapter['chapter_id']) { echo 'selected'; } 
-					echo '>'.$title.'</option>';
-				}
-		parent_list($chapter['chapter_id']);
+function parent_list($parent, $deep=0) {
+	global $all_chapters, $chapter_id, $fetch_content;
+	foreach($all_chapters as $key=>$val ){
+	
+		if($parent == $val['parent'])
+		{
+			echo "\n<option value='".$key."' ".( ($key == $chapter_id) ? " disabled='disabled' " : "").( ($key == $fetch_content['parent']) ? " selected='selected' " : ""  ).">".$val['title']."</option>\n";
+		}
+		if($deep < 4)
+		{
+			parent_list($val['chapter_id'], $deep+1);
 		}
 	}
 }

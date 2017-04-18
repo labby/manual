@@ -30,10 +30,4 @@ if (defined('LEPTON_PATH')) {
 }
 // end include class.secure.php
 
-// Insert a new row into the database
-$database->simple_query(
-	"INSERT INTO `".TABLE_PREFIX."mod_manual_settings` (`page_id`, `section_id`) VALUES (?,?)",
-	array($page_id, $section_id)
-);
-
 ?>

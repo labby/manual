@@ -30,14 +30,10 @@ if (defined('LEPTON_PATH')) {
 }
 // end include class.secure.php
 
-// Load Language file
-if(LANGUAGE_LOADED) {
-	if(!file_exists(LEPTON_PATH.'/modules/manual/languages/'.LANGUAGE.'.php')) {
-		require_once(LEPTON_PATH.'/modules/manual/languages/EN.php');
-	} else {
-		require_once(LEPTON_PATH.'/modules/manual/languages/'.LANGUAGE.'.php');
-	}
-}
+//	Load Language file
+$lang = (dirname(__FILE__))."/languages/". LANGUAGE .".php";
+require_once ( !file_exists($lang) ? (dirname(__FILE__))."/languages/EN.php" : $lang );
+
 
 // Get Settings
 $fetch_settings = array();
@@ -55,24 +51,33 @@ if(count($fetch_settings) > 0) {
 	$footer = '';
 }		
 
+$oManual = manual::getInstance();
+$all_chapters = $oManual->get_manual_by_sectionID( $section_id );
+	
 // Check if we should show the "contents" page or the actual chapter
 if(defined('CHAPTER_ID')) {
 
 	// Get chapter content
-	$get_content = $database->query("SELECT * FROM ".TABLE_PREFIX."mod_manual_chapters WHERE chapter_id = '".CHAPTER_ID."'");
-	$fetch_content = $get_content->fetchRow();
-	$title = stripslashes($fetch_content['title']);
-	$description = stripslashes($fetch_content['description']);
-	$content = $fetch_content['content'];
+	$fetch_content = array();
+	$database->execute_query(
+		"SELECT * FROM `".TABLE_PREFIX."mod_manual_chapters` WHERE `chapter_id` = ".CHAPTER_ID,
+		true,
+		$fetch_content,
+		false
+	);
+	
+	$title 			= stripslashes($fetch_content['title']);
+	$description	= stripslashes($fetch_content['description']);
+	$content		= $fetch_content['content'];
 	$wb->preprocess($content);
-	$parent = $fetch_content['parent'];
-	$level = $fetch_content['level'];
-	$position = $fetch_content['position'];
-	$modified_when = $fetch_content['modified_when'];
-	$modified_by = $fetch_content['modified_by'];
+	$parent 		= $fetch_content['parent'];
+	$level 			= $fetch_content['level'];
+	$position 		= $fetch_content['position'];
+	$modified_when	= $fetch_content['modified_when'];
+	$modified_by 	= $fetch_content['modified_by'];
 	
 	// Get number of chapters
-	$get_num_chapters = $database->query("SELECT chapter_id FROM ".TABLE_PREFIX."mod_manual_chapters WHERE section_id = '$section_id' AND parent = '$parent'");
+	$get_num_chapters = $database->query("SELECT `chapter_id` FROM `".TABLE_PREFIX."mod_manual_chapters` WHERE `section_id` = '".$section_id."' AND parent = '".$parent."'");
 	$num_chapters = $get_num_chapters->numRows();
 
 	// Get sub chapters
@@ -198,7 +203,7 @@ if(defined('CHAPTER_ID')) {
 		while($chapter = $query_subs->fetchRow()) {
 			?>
 			<li class="MLchapter">
-				<a ID="MLpage_chapt_lnk" href="<?php echo page_link($chapter['link']); ?>">
+				<a ID="MLpage_chapt_lnk" href="<?php echo page_link($chapter['link']); ?>
 					<?php echo stripslashes($chapter['title']); ?>
 				</a>
 				<?php
@@ -273,8 +278,23 @@ if(defined('CHAPTER_ID')) {
 		while($chapter = $get_chapters->fetchRow()) {
 			?>
 			<li class="MLchapter">
-				<a ID="MLchapt_lnk" href="<?php echo page_link($chapter['link']); ?>">
-					<?php echo stripslashes($chapter['title']); ?>
+				<a ID="MLchapt_lnk" href="<?php 
+					// get the root:
+					$temp_root="";
+					$temp_parent = $chapter['parent'];
+					while($temp_parent != 0)
+					{
+						$temp_root = $all_chapters[ $temp_parent ]['link'].$temp_root;
+						$temp_parent = $all_chapters[ $temp_parent ]['parent'];
+					}
+
+					echo page_link( $wb->page['link'].$temp_root.$chapter['link']);
+					
+					?>">
+					<?php
+					echo stripslashes($chapter['title']);
+					// echo LEPTON_tools::display($wb);
+					?>
 				</a>
 				<?php
 				$description = stripslashes($chapter['description']);
@@ -293,7 +313,19 @@ if(defined('CHAPTER_ID')) {
 				while($chapter = $get_sub_chapters->fetchRow()) {
 					?>
 					<li class="MLsubchapt">
-						<a ID="MLsubchapt_lnk" href="<?php echo page_link($chapter['link']); ?>">
+						<a ID="MLsubchapt_lnk" href="<?php
+							// get the root:
+					$temp_root="";
+					$temp_parent = $chapter['parent'];
+					while($temp_parent != 0)
+					{
+						$temp_root = $all_chapters[ $temp_parent ]['link'].$temp_root;
+						$temp_parent = $all_chapters[ $temp_parent ]['parent'];
+					}
+
+					echo page_link( $wb->page['link'].$temp_root.$chapter['link']);
+							
+							?>">
 							<?php echo stripslashes($chapter['title']); ?>
 						</a>
 						<?php

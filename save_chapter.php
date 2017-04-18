@@ -48,7 +48,7 @@ require_once(LEPTON_PATH."/include/jscalendar/jscalendar-functions.php");
 if($admin->get_post('title') == '') {
 	$admin->print_error($MESSAGE['GENERIC']['FILL_IN_ALL'], LEPTON_URL.'/modules/manual/modify_chapter.php?page_id='.$page_id.'&section_id='.$section_id.'&chapter_id='.$id);
 } else {
-	$title = addslashes($admin->get_post('title'));
+	$title 	= addslashes($admin->get_post('title'));
 	$description = addslashes($admin->get_post('description'));
 	$content =addslashes($admin->get_post('content'));	
 	$parent = $admin->get_post('parent');
@@ -66,58 +66,6 @@ if($admin->get_post('title') == '') {
 	$modified_by = $admin->get_post('modified_by'); 
 }
 
-// Check if parent has changed
-if($old_parent != $parent and $parent != '') {
-	// Include the ordering class
-	require(LEPTON_PATH.'/modules/manual/class.order.php');
-	// Get new order
-	$order = new order(TABLE_PREFIX.'mod_manual_chapters', 'position', 'chapter_id', 'parent', $section_id);
-	$position = $order->get_new($parent);
-}
-
-if($parent == "") $parent = 0;
-
-// Get parent title and link (if there is a parent)
-if($parent != 0)
-{
-	$fetch_parent = array();
-	$database->execute_query(
-		"SELECT `chapter_id`,`title`,`level`,`link` FROM `".TABLE_PREFIX."mod_manual_chapters` WHERE `chapter_id` = ".$parent,
-		true,
-		$fetch_parent,
-		false
-	);
-	$parent_title = $fetch_parent['title'];
-	$parent_link = $fetch_parent['link'];
-	$parent_id = $fetch_parent['chapter_id'];
-	$parent_level = $fetch_parent['level'];
-	$level = 1;	// Aldus: ?
-	
-	// Check for second level?
-	if ($parent_level != 0 )
-	{
-		$fetch_parent = array();
-		$database->execute_query(
-			"SELECT `chapter_id`,`title`,`level`, `link` FROM `".TABLE_PREFIX."mod_manual_chapters` WHERE `chapter_id` = ".$parent_id,
-			true,
-			$fetch_parent,
-			false
-		);
-		if ($parent != 0)
-		{
-			$parent_id = $fetch_parent['chapter_id'];
-			$parent_link = $fetch_parent['link'];
-			$parent_title2 = $fetch_parent['title'];
-			$level = 2;
-		}
-	}
-} else {
-	$parent_title = '(no title)'; // [2017-04-17] aldus: hier!
-	$parent_link = '';
-	$parent_id = '';
-	$level = 0;
-}
-
 // Get page link URL
 $page = array();
 $database->execute_query(
@@ -128,7 +76,28 @@ $database->execute_query(
 );
 $page_level = $page['level'];
 $page_link	= $page['link'];
-$chapter_name = $page_link.'/';
+
+if($parent == "") $parent = 0;
+
+$oManual = manual::getInstance();
+$all_chapters = $oManual->get_manual_by_sectionID( $section_id );
+
+$origin_data = $all_chapters[ $chapter_id ];
+	
+$temp_root = "";
+
+if($parent > 0)
+{
+	$temp_parent = $parent;
+	
+	while($temp_parent != 0)
+	{
+		$temp_root = $all_chapters[ $temp_parent ]['link'].$temp_root;
+		$temp_parent = $all_chapters[ $temp_parent ]['parent'];
+	}
+
+	$oManual->test_root( LEPTON_PATH.PAGES_DIRECTORY.$page_link.$temp_root ); // !
+}
 
 // Work-out what the link should be
 if(function_exists("save_filename"))
@@ -138,66 +107,72 @@ if(function_exists("save_filename"))
 	// backward compatible to L* < 2.4.x
 	$temp_filename = page_filename($title);
 }
-if($temp_filename != '')
+
+// here we go
+$full_filepath = LEPTON_PATH.PAGES_DIRECTORY.$page_link.$temp_root."/".$temp_filename.".php";
+
+// has the filename changed?
+if($origin_data['link'] != "/".$temp_filename)
 {
-	$chapter_link = $parent_link."/".$temp_filename;
-} else {
-	$chapter_link = $chapter_name."/"; // [2017-04-17] Aldus: the $temp_filename is empty!
-}
-
-if(!file_exists(LEPTON_PATH.PAGES_DIRECTORY.$chapter_name)) {
-	mkdir(LEPTON_PATH.PAGES_DIRECTORY.$chapter_name);
-}
-// Create access dir for parent
-if(!file_exists(LEPTON_PATH.PAGES_DIRECTORY.$parent_link.'/') AND $parent_link != '') {
-	mkdir(LEPTON_PATH.PAGES_DIRECTORY.$parent_link.'/');
-}
-
-if(!is_writable(LEPTON_PATH.PAGES_DIRECTORY.$chapter_name)) {
-	$admin->print_error($MESSAGE['PAGES']['CANNOT_CREATE_ACCESS_FILE']);
-} elseif($old_link != $chapter_link OR !file_exists(LEPTON_PATH.PAGES_DIRECTORY.$chapter_link.PAGE_EXTENSION)) {
-	// We need to create a new file
-	// First, delete old file if it exists
-	if(file_exists(LEPTON_PATH.PAGES_DIRECTORY.$old_link.PAGE_EXTENSION)) {
-		unlink(LEPTON_PATH.PAGES_DIRECTORY.$old_link.PAGE_EXTENSION);
+	$look_up = LEPTON_PATH.PAGES_DIRECTORY.$page_link.$temp_root.$origin_data['link'].".php";
+	if(file_exists($look_up))
+	{
+		rename(
+			$look_up,
+			$full_filepath
+		);
 	}
-	// Specify the filename
-	$filename = PAGES_DIRECTORY.$chapter_link.PAGE_EXTENSION;
-	// Write to the filename
-	create_access_file2 ($filename,$page_id, $section_id, $chapter_id) ;
-
-	// Move a directory for this page
-	if(file_exists(LEPTON_PATH.PAGES_DIRECTORY.$old_link.'/') AND is_dir(LEPTON_PATH.PAGES_DIRECTORY.$old_link.'/') AND $old_link <> $chapter_link AND $old_link != '' ) {
-		rename(LEPTON_PATH.PAGES_DIRECTORY.$old_link.'/', LEPTON_PATH.PAGES_DIRECTORY.$chapter_link.'/');
+	//	also the associated directory?
+	$look_up = LEPTON_PATH.PAGES_DIRECTORY.$page_link.$temp_root.$origin_data['link'];
+	if(file_exists($look_up))
+	{
+		rename(
+			$look_up,
+			LEPTON_PATH.PAGES_DIRECTORY.$page_link.$temp_root."/".$temp_filename
+		);
 	}
-	// Update any pages that had the old link with the new one
-	$old_link_len = strlen($old_link);
-	if ($old_link != '' ) {
-		$query_subs = $database->query("SELECT chapter_id,link FROM ".TABLE_PREFIX."mod_manual_chapters WHERE link LIKE '%$old_link/%' AND section_id='$section_id' ORDER BY LEVEL ASC");
-		if($query_subs->numRows() > 0) {
-			while($sub = $query_subs->fetchRow()) {
-				// Double-check to see if it contains old link
-				if(substr($sub['link'], 0, $old_link_len) == $old_link) {
-					// Get new link
-					$replace_this = $old_link;
-					$old_sub_link_len =strlen($sub['link']);
-					$new_sub_link = $chapter_link.'/'.substr($sub['link'],$old_link_len+1,$old_sub_link_len);
-					// Update link
-					$database->query("UPDATE ".TABLE_PREFIX."mod_manual_chapters  SET link = '$new_sub_link' WHERE chapter_id = '".$sub['chapter_id']."' LIMIT 1");
-					// Re-write the access file for this page
-					$old_subpage_file = LEPTON_PATH.PAGES_DIRECTORY.$new_sub_link.PAGE_EXTENSION;
-					if(file_exists($old_subpage_file)) {
-						unlink($old_subpage_file);
-					}
-					create_access_file2(PAGES_DIRECTORY.$new_sub_link.PAGE_EXTENSION, $page_id, $section_id, $sub['chapter_id']);
-				}
-			}
-		}
+}
+
+if(!file_exists($full_filepath))
+{
+	$pages_dir_depth = count(explode('/',$page_link.$temp_root."/".$temp_filename));
+	for($i=1, $path_add=""; $i < $pages_dir_depth; $i++, $path_add .= "../"); 
+
+$file_content = ''.
+'<?php
+	//	#manual 2.8.2
+	$page_id = '.$page_id.';
+	$section_id = '.$section_id.';
+	$chapter_id = '.$chapter_id.';
+	define("CHAPTER_ID", '.$chapter_id.');
+	require "'.$path_add.'index.php";
+?>';
+	if( false === file_put_contents( $full_filepath, $file_content) )
+	{
+		die("Problem with: ".$full_filepath);
 	}
 }
 
 // Update row
-$database->query("UPDATE ".TABLE_PREFIX."mod_manual_chapters SET parent = '$parent', title = '$title', level = '$level', link = '$chapter_link', position = '$position', description = '$description', `content` = '$content', active = '$active', modified_when = '".time()."', modified_by = '".$admin->get_user_id()."' WHERE chapter_id = '$chapter_id'");
+$fields = array(
+	"parent"	=> $parent,
+	"title"		=> $title,
+	"level"		=> $level,
+	"link"		=> "/".$temp_filename,	// !
+	"position"	=> $position,
+	"description"	=> $description,
+	"content"	=> $content,
+	"active"	=> $active,
+	"modified_when" => time(),
+	"modified_by"	=> $admin->get_user_id()
+);
+
+$database->build_and_execute(
+	"update",
+	TABLE_PREFIX."mod_manual_chapters",
+	$fields,
+	"`chapter_id` = ".$chapter_id
+);
 
 // Check if there is a db error, otherwise say successful
 if($database->is_error()) {
