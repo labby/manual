@@ -116,7 +116,8 @@ if($parent === $origin_data['parent'])
 		$temp_root_origin = $all_chapters[ $temp_parent_origin ]['link'].$temp_root_origin;
 		$temp_parent_origin = $all_chapters[ $temp_parent_origin ]['parent'];
 	}
-
+	
+	$oManual->test_root( LEPTON_PATH.PAGES_DIRECTORY.$page_link );
 }
 
 // Work-out what the link should be
