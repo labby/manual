@@ -31,8 +31,7 @@ if (defined('LEPTON_PATH')) {
 // end include class.secure.php
 
 //	Load Language file
-$lang = (dirname(__FILE__))."/languages/". LANGUAGE .".php";
-require_once ( !file_exists($lang) ? (dirname(__FILE__))."/languages/EN.php" : $lang );
+require_once __DIR__."/register_language.php";
 
 
 // Get Settings
