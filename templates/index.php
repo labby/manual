@@ -10,7 +10,7 @@
  *  @platform       see info.php of this module
  *
  */
-  
+
 // include class.secure.php to protect this file and the whole CMS!
 if (defined('LEPTON_PATH')) {   
    include(LEPTON_PATH.'/framework/class.secure.php');
@@ -29,16 +29,5 @@ if (defined('LEPTON_PATH')) {
    }
 }
 // end include class.secure.php
-
-$module_directory	= 'manual';
-$module_name		= 'Manual';
-$module_function	= 'page';
-$module_version		= '2.9.0';
-$module_platform	= '2.3';
-$module_home		= 'https://github.com/labby/manual, http://www.lepton-cms.com/lepador/modules/manual.php';
-$module_guid		= '34EA748F-D867-4E57-AE3E-15F703C4046D';
-$module_author		= 'Ryan Djurovich, Matthias Gallas, Uffe Christoffersen, pcwacht, Rob Smith, erpe, Aldus (last)';
-$module_license		= 'GNU General Public License';
-$module_description	= 'This module allows you to create and manage user manuals easily.';
 
 ?>

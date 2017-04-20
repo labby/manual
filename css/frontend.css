@@ -40,7 +40,7 @@ ol.MLindex_table {
     padding-bottom: 10px;
 }
 
-#MLchapt_lnk {
+.MLchapt_lnk {
     color: #333;
     font-size: 18px;
     font-weight: normal;
@@ -84,7 +84,7 @@ ol.MLindex_table {
 }
 
 
-#MLprev_link_top, #MLnext_link_top, #MLindex_link_top {
+#MLprev_link_top, #MLnext_link_top {
   color: #666666;
   font-size: 11px;
   font-weight: bold;
@@ -105,3 +105,91 @@ ol.MLindex_table {
 	display:none;
 }
 
+/**
+ *	2.8.2
+ */
+p.MLchapt_description {
+	color: #999999;
+	font-weight: normal;
+	font-style: italic;
+	font-size: 12px;
+	margin-left:20px;
+}
+
+ol.level0 { margin-left: 10px; }
+ol.level1 { margin-left: 20px; margin-top:10px; }
+ol.level2 { margin-left: 30px; margin-top:10px; }
+ol.level3 { margin-left: 40px; margin-top:10px; }
+ol.level4 { margin-left: 50px; margin-top:10px; }
+
+a.level1,
+a.level2,
+a.level3,
+a.level4 {
+	font-size: 13px;
+	font-weight: normal;
+}
+
+p.MLdescription {
+	margin-left:20px;
+	margin-bottom:20px;
+	font-weight: normal;
+	font-style: italic;
+	color:#999999;
+}
+
+div.MLnavi {
+	display: table;
+	width: 100%;
+	text-align: center;
+	height: 32px;
+}
+
+div.MLnavi a.MLindex_link_top {
+	color: #AAAAAA;
+	font-size: 12px;
+}
+
+div.MLnavi a.MLindex_link_top:hover {
+	color: #000000;
+}
+
+p.last_update_info {
+	font-size: 11px;
+	color: #CCCCCC;
+	display: block;
+	width: 100%;
+	height: 20px;
+	text-align: center;
+}
+
+p.last_update_info em {
+	color: #999999;
+}
+
+hr.ML_divider {
+	margin-top:16px;
+	border-style: dashed;
+	border-width: 0px 0px 1px 0px;
+	border-color: #CCCCCC;
+}
+
+div.MLnavi_first,
+div.MLnavi_prev,
+div.MLnavi_next,
+div.MLnavi_last {
+	display: table-cell;
+	width: 17%;
+	overflow: hidden;
+	text-align: left;
+}
+div.MLnavi_prev {
+	text-align: center;
+}
+div.MLnavi_next {
+	text-align: center;
+}
+
+div.MLnavi_last {
+	text-align: right;
+}

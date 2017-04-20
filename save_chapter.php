@@ -143,7 +143,7 @@ if(file_exists($look_up))
 }
 //	also the associated directory?
 $look_up = LEPTON_PATH.PAGES_DIRECTORY.$page_link.$temp_root_origin.$origin_data['link'];
-if(file_exists($look_up))
+if( (true === file_exists($look_up)) && ($origin_data['title'] != "") )
 {
 	rename(
 		$look_up,

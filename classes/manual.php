@@ -73,7 +73,89 @@ class manual
     		}
     	}
     }
+    
+    public function get_root( &$allChapters, $aChapterID)
+    {
+    	$root = "";
+    	do
+    	{
+    		$parent = $allChapters[ $aChapterID ]['parent'];
+    		$root = $allChapters[ $aChapterID ]['link'].$root;
+    		$aChapterID = $parent;
+    	} while ( $parent != 0 );
+    	
+    	return $root;
+    }
+    
+    public function get_sub_chapters( &$allChapters, $aChapterID)
+    {
+    	$returnVal = array();
+    	foreach($allChapters as $key=>$data) {
+    		if($data['parent'] === $aChapterID)
+    		{
+    			$returnVal[ $key ] = $data;
+    		}
+    	}
+   		return $returnVal; 
+    }
 
+	public function get_siblings( $aParentID = 0)
+	{
+		$database = LEPTON_database::getInstance();
+		$all = array();
+		$database->execute_query(
+			"SELECT `chapter_id`,`link`,`position`,`title` FROM `".TABLE_PREFIX."mod_manual_chapters` WHERE `parent`=".$aParentID." AND `active`='1' ORDER BY `position`",
+			true,
+			$all,
+			true
+		);
+		return $all;
+	}
+	
+	public function build_tree( &$allChapters, &$aTreeStorage=array() , $aChapterID=0)
+	{
+		global $wb;
+		foreach($allChapters as $key => $currentChapter)
+		{
+			if($currentChapter['parent'] == $aChapterID)
+			{
+				//	Build the comlete link incl. the "root"
+				$currentChapter['link']	= page_link( $wb->page['link']. $this->get_root( $allChapters, $key ) );
+				
+				//	get subchapters
+				$currentChapter['subchapters'] = array();
+				
+				/*
+				foreach($sub_chapters as $subkey => $subdata) {
+					// $this->build_tree( $allChapters, $currentChapter['subchapters'], $subdata['chapter_id']);
+					if(!isset($currentChapter['subchapters'][ $subkey ]))
+					{
+						$subdata['link'] = page_link( $wb->page['link']. $this->get_root( $allChapters, $subkey ) );
+						$subdata['subchapters']	= array();
+						$currentChapter['subchapters'][ $subkey ] = $subdata;
+					
+					}
+				}
+				*/
+				
+				$aTreeStorage[ $key ] = $currentChapter;
+				
+				$sub_chapters = $this->get_sub_chapters( $allChapters, $currentChapter['chapter_id']);
+				foreach($sub_chapters as $subkey => $subdata) {
+					// $this->build_tree( $allChapters, $aTreeStorage[ $key ]['subchapters'], $subdata['chapter_id']);
+					
+					$subdata['link'] = page_link( $wb->page['link']. $this->get_root( $allChapters, $subkey ) );
+					$subdata['subchapters']	= array();
+					
+					$this->build_tree( $allChapters, $subdata['subchapters'], $subdata['chapter_id']);
+					
+					$aTreeStorage[ $key ]['subchapters'][ $subkey ] = $subdata;
+					
+					
+				}
+			}
+		}
+	}
 }
 
 

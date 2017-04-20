@@ -1,0 +1,31 @@
+{% autoescape false %}
+
+<!-- module: manual -->
+<span class="MLheader">{{ header }}</span>
+
+{% macro display_chapter( chapter_list, deep ) %}
+	{% for chapter_id,chapter_data in chapter_list %}
+	
+		<!-- begin {{ deep }} -->
+		<ol class="MLindex_table level{{ deep }}">
+			<li class="MLchapter">
+				<a class="MLchapt_lnk level{{ deep }}" href="{{ chapter_data.link }}" >{{ chapter_data.title }}</a>
+				<p class="MLchapt_description">{{ chapter_data.description }}</p>
+				{% if (chapter_data.subchapters|length > 0) %}
+				{% import _self as sub_here %}	
+				{{ sub_here.display_chapter( chapter_data.subchapters, (deep +1) ) }} 
+				{% endif %}
+			</li>
+		</ol>
+		<!-- end -->
+
+	{% endfor %}
+{% endmacro %}
+
+{% import _self as chapters %}	
+{{ chapters.display_chapter( chapter_tree, 0 ) }}
+	
+<span class="MLheader">{{ footer }}</span>
+<!-- end module: manual -->
+
+{% endautoescape %}

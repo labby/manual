@@ -33,7 +33,6 @@ if (defined('LEPTON_PATH')) {
 //	Load Language file
 require_once __DIR__."/register_language.php";
 
-
 // Get Settings
 $fetch_settings = array();
 $database->execute_query(
@@ -52,28 +51,138 @@ if(count($fetch_settings) > 0) {
 
 $oManual = manual::getInstance();
 $all_chapters = $oManual->get_manual_by_sectionID( $section_id );
+
+if( 0 === count($all_chapters) )
+{
+	echo $MLTEXT['UNDERCONSTRUCTION'];
+	return false;
+}
+
+/**
+ *	Get the template engine
+ */
+global $parser, $loader;
+require( dirname(__FILE__)."/register_parser.php" );
 	
 // Check if we should show the "contents" page or the actual chapter
 if(defined('CHAPTER_ID')) {
 
 	// Get chapter content
-	$fetch_content = array();
+	$chapter_content = array();
 	$database->execute_query(
 		"SELECT * FROM `".TABLE_PREFIX."mod_manual_chapters` WHERE `chapter_id` = ".CHAPTER_ID,
 		true,
-		$fetch_content,
+		$chapter_content,
 		false
 	);
 	
-	$title 			= stripslashes($fetch_content['title']);
-	$description	= stripslashes($fetch_content['description']);
-	$content		= $fetch_content['content'];
-	$wb->preprocess($content);
-	$parent 		= $fetch_content['parent'];
-	$level 			= $fetch_content['level'];
-	$position 		= $fetch_content['position'];
-	$modified_when	= $fetch_content['modified_when'];
-	$modified_by 	= $fetch_content['modified_by'];
+	//	pre process some data
+	$wb->preprocess( $chapter_content['content'] );
+	
+	$oDate = lib_lepton::getToolInstance("datetools");
+	$oDate->set_core_language( LANGUAGE );
+		
+	$oDate->setFormat( $oDate->CORE_date_formats[ DATE_FORMAT ] );
+	$modify_when_date = $oDate->toHTML( $chapter_content['modified_when'] );
+		
+	$oDate->setFormat( $oDate->CORE_time_formats[ TIME_FORMAT ] );
+	$modify_when_time = $oDate->toHTML( $chapter_content['modified_when'] );
+	
+	// user
+	$modified_user = array();
+	$database->execute_query(
+		"SELECT `display_name`,`username` FROM `".TABLE_PREFIX."users` WHERE `user_id` = ".$chapter_content['modified_by'],
+		true,
+		$modified_user,
+		false
+	);
+	
+	/**
+	 *	Any siblings for this chapter?
+	 */
+	$siblings = $oManual->get_siblings( $chapter_content['parent'] );
+	
+	$sibling_list = array(
+		'first'	=> 0,
+		'prev'	=> 0,
+		'next'	=> 0,
+		'last'	=> 0
+	);
+	
+	$num_of_siblings = count($siblings); 
+	if( $num_of_siblings > 1 )
+	{
+		
+		/**
+		 *	Geet the actual relative list position
+		 *
+		 */
+		for( $i=0; $i < $num_of_siblings; $i++ ){
+			if( $siblings[ $i]['chapter_id'] === $chapter_content['chapter_id'] )
+			{
+				$current_pos = $i;
+				break;
+			}
+		} 
+		
+		if($current_pos > 0)
+		{
+			// get prev
+			$sibling_list['prev'] = array(
+				'title'	=> $siblings[$current_pos-1]['title'],
+				'link'	=> page_link($wb->page['link'].($oManual->get_root( $all_chapters, $siblings[$current_pos-1]['chapter_id'] ))),
+				'id'	=> $siblings[$current_pos-1]['chapter_id']
+			);
+		}
+		
+		if($current_pos < $num_of_siblings-2) // ! keep in mind, we need the pre-last position
+		{
+			// get next!
+			$sibling_list['next'] = array(
+				'title'	=> $siblings[$current_pos+1]['title'],
+				'link'	=> page_link($wb->page['link'].($oManual->get_root( $all_chapters, $siblings[$current_pos+1]['chapter_id'] ))),
+				'id'	=> $siblings[$current_pos+1]['chapter_id']
+			);
+
+		}
+		
+		if($siblings[0]['chapter_id'] != $chapter_content['chapter_id'])
+		{
+			$sibling_list['first'] = array(
+				'title'	=> $siblings[0]['title'],
+				'link'	=> page_link($wb->page['link'].($oManual->get_root( $all_chapters, $siblings[0]['chapter_id'] ))),
+				'id'	=> $siblings[0]['chapter_id']
+			);
+		}
+		
+		if($siblings[ $num_of_siblings-1 ]['chapter_id'] != $chapter_content['chapter_id'])
+		{
+			$sibling_list['last'] = array(
+				'title'	=> $siblings[ $num_of_siblings-1 ]['title'],
+				'link'	=> page_link( $wb->page['link'].$oManual->get_root( $all_chapters, $siblings[ $num_of_siblings-1 ]['chapter_id'] ) ),
+				'id'	=> $siblings[ $num_of_siblings-1 ]['chapter_id']
+			);
+		}
+	}
+	/**
+	 *		Here we go to display the details
+	 */
+	$page_data = array(
+		'MLTEXT'			=> $MLTEXT,
+		'main_index'		=> page_link( $wb->page['link'] ),
+		'chapter_content'	=> $chapter_content,
+		'modify_when_date'	=> $modify_when_date,
+		'modify_when_time'	=> $modify_when_time,
+		'modified_user'		=> $modified_user,
+		'sibling_list'		=> $sibling_list
+	);
+	
+	echo $parser->render(
+		"@manual/chapter_page.lte",
+		$page_data
+	);
+	
+	return true;
 	
 	// Get number of chapters
 	$get_num_chapters = $database->query("SELECT `chapter_id` FROM `".TABLE_PREFIX."mod_manual_chapters` WHERE `section_id` = '".$section_id."' AND parent = '".$parent."'");
@@ -276,118 +385,23 @@ if(defined('CHAPTER_ID')) {
 	<?php
 	
 } else {
-	// Show "contents" page
-	echo '<span class="MLheader">'.$header.'</span>';
+
+	// List all chapters for this section
 	
-	// Get chapters list
-	$get_chapters = $database->query("SELECT * FROM ".TABLE_PREFIX."mod_manual_chapters WHERE section_id = '$section_id' AND parent = '0' AND active = '1' ORDER BY position ASC");
-	if($get_chapters->numRows() > 0) {
-		?>
-		<ol class="MLindex_table">
-		<?php
-		while($chapter = $get_chapters->fetchRow()) {
-			?>
-			<li class="MLchapter">
-				<a ID="MLchapt_lnk" href="<?php 
-					// get the root:
-					$temp_root="";
-					$temp_parent = $chapter['parent'];
-					while($temp_parent != 0)
-					{
-						$temp_root = $all_chapters[ $temp_parent ]['link'].$temp_root;
-						$temp_parent = $all_chapters[ $temp_parent ]['parent'];
-					}
+	$chapter_tree = array();
+	$oManual->build_tree( $all_chapters, $chapter_tree, 0);
 
-					echo page_link( $wb->page['link'].$temp_root.$chapter['link']);
-					
-					?>">
-					<?php
-					echo stripslashes($chapter['title']);
-					// echo LEPTON_tools::display($wb);
-					?>
-				</a>
-				<?php
-				$description = stripslashes($chapter['description']);
-				if($description != '') {
-					echo '<br />'.$description;
-				}
-				?>
-			</li>	
-			<?php
-			// Get sub-chapters
-			$get_sub_chapters = $database->query("SELECT * FROM ".TABLE_PREFIX."mod_manual_chapters WHERE section_id = '$section_id' AND parent = '".$chapter['chapter_id']."' AND active = '1' ORDER BY position ASC");
-			if($get_sub_chapters->numRows() > 0) {
-				?>
-				<ol>
-				<?php
-				while($chapter = $get_sub_chapters->fetchRow()) {
-					?>
-					<li class="MLsubchapt">
-						<a ID="MLsubchapt_lnk" href="<?php
-							// get the root:
-					$temp_root="";
-					$temp_parent = $chapter['parent'];
-					while($temp_parent != 0)
-					{
-						$temp_root = $all_chapters[ $temp_parent ]['link'].$temp_root;
-						$temp_parent = $all_chapters[ $temp_parent ]['parent'];
-					}
-
-					echo page_link( $wb->page['link'].$temp_root.$chapter['link']);
-							
-							?>">
-							<?php echo stripslashes($chapter['title']); ?>
-						</a>
-						<?php
-						$description = stripslashes($chapter['description']);
-						if($description != '') {
-							echo '<br />'.$description;
-						}
-						?>
-					</li>
-					<?php
-					// Get sub-chapters
-					$get_sub2_chapters = $database->query("SELECT * FROM ".TABLE_PREFIX."mod_manual_chapters WHERE section_id = '$section_id' AND parent = '".$chapter['chapter_id']."' AND active = '1' ORDER BY position ASC");
-					if($get_sub2_chapters->numRows() > 0) {
-						?>
-						<ol>
-						<?php
-						while($chapter2 = $get_sub2_chapters->fetchRow()) {
-							?>
-							<li class="MLsub2chapt">
-								<a ID="MLsub2chapt_lnk" href="<?php echo page_link($chapter2['link']); ?>">
-									<?php echo stripslashes($chapter2['title']); ?>
-								</a>
-								<?php
-								$description = stripslashes($chapter2['description']);
-								if($description != '') {
-									echo '<br />'.$description;
-								}
-								?>
-							</li>
-							<?php
-						}
-						?>
-						</ol>
-						<?php
-					}
-
-				}
-				?>
-				</ol>
-				<?php
-			}
-		}
-		?>
-		</ol>
-		<?php
-		
-	} else {
-		echo $MLTEXT['UNDERCONSTRUCTION'];
-	}
+	$page_data = array(
+		'header'	=> $header,
+		'footer'	=> $footer,
+		'chapter_tree' => $chapter_tree
+	);
 	
-	// Print footer
-	echo '<br /><span class="MLfooter">'.$footer.'</span>';
+	echo $parser->render(
+		"@manual/view.lte",
+		$page_data
+	);	
+
 }
 
 ?>

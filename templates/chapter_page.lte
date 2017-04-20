@@ -1,0 +1,52 @@
+{% autoescape false %}
+
+<!-- module: manual - chapter page -->
+
+<!-- index link -->
+
+<div class="MLnavi">
+
+	<div class="MLnavi_first">
+	{% if (sibling_list.first != 0) %}
+		<a class="MLindex_link_top" href="{{ sibling_list.first.link }}" >{{ sibling_list.first.title }}</a>
+	{% endif %}
+	</div>	
+
+	<div class="MLnavi_prev">
+	{% if (sibling_list.prev != 0) %}
+		<a class="MLindex_link_top" href="{{ sibling_list.prev.link }}" >{{ sibling_list.prev.title }}</a>
+	{% endif %}
+	</div>	
+	
+	<a class="MLindex_link_top" href="{{ main_index }}">index</a>
+
+	<div class="MLnavi_next">
+	{% if (sibling_list.next != 0) %}
+		<a class="MLindex_link_top" href="{{ sibling_list.next.link }}" >{{ sibling_list.next.title }}</a>
+	{% endif %}
+	</div>	
+	
+	<div class="MLnavi_last">
+	{% if (sibling_list.last != 0) %}
+		<a class="MLindex_link_top" href="{{ sibling_list.last.link }}" >{{ sibling_list.last.title }}</a>
+	{% endif %}
+	</div>
+
+</div>
+
+<!-- titel -->
+<p class="MLtitle">{{ chapter_content.title }}</p>
+
+<!-- description -->
+<p class="MLdescription">{{ chapter_content.description }}</p>
+
+<!-- content -->
+{{ chapter_content.content }}
+
+<!-- author -->
+<hr class="ML_divider" />
+<p class="last_update_info">{{ MLTEXT.LASTUPDATED}} <em>{{ modified_user.display_name }}</em> {{ MLTEXT.ON }} <em>{{ modify_when_date }}</em> {{ MLTEXT.AT }} <em>{{ modify_when_time }}</em></p>
+
+<!-- end module: manual -->
+
+{% endautoescape %}

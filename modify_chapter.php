@@ -96,6 +96,7 @@ function parent_list($parent, $deep=0) {
 	foreach($all_chapters as $key=>$val ){
 		
 		if($key == $parent) continue;
+		if($val['title'] == "") continue;
 		
 		if($parent == $val['parent'])
 		{
@@ -176,7 +177,7 @@ parent_list(0,1);
 			<input name="save" type="submit" value="<?php echo $TEXT['SAVE']; ?>" style="width: 100px; margin-top: 5px;"></form>
 		</td>
 		<td align="right">
-			<input type="button" value="<?php echo $TEXT['CANCEL']; ?>" onclick="javascript: window.location = '<?php echo ADMIN_URL; ?>/pages/modify.php?page_id=<?php echo $page_id; ?>';" style="width: 100px; margin-top: 5px;" />
+			<input class="cancel" type="button" value="<?php echo $TEXT['CANCEL']; ?>" onclick="javascript: window.location = '<?php echo ADMIN_URL; ?>/pages/modify.php?page_id=<?php echo $page_id; ?>';" style="width: 100px; margin-top: 5px;" />
 		</td>
 	</tr>
 </table>
