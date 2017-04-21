@@ -1,0 +1,59 @@
+/**
+ *	manual - additional css
+ */
+ 
+div.manual_head_title {
+	font-size: 14px;
+	font-weight: bold;
+	color: #990000;
+	margin-left: 20px;
+	margin-top: 20px;
+	margin-bottom:22px;
+}
+
+div.manual_backend_table {
+	width: 100%;
+	display: table;
+}
+
+div.manual_backend_table_row {
+	display: table-row;
+	height:25px;
+}
+
+div.manual_backend_table div.manual_backend_table_action,
+div.manual_backend_table div.manual_backend_table_title
+ {
+	
+	display: table-cell;
+}
+
+div.manual_backend_table_action {
+	width:50px;
+	display: table-cell;
+	text-align: left;
+}
+
+div.manual_backend_table_action:first-child {
+	text-align:left;
+	padding: 0px;
+	width:20px;
+}
+
+div.manual_backend_table_title {
+	text-align:left;
+	display: table-cell;
+	padding: 0;
+	margin-left: -10px;
+}
+
+div.manual_backend_table_title a {
+	margin: 0;
+	padding: 0;
+}
+
+div.level0 a { padding-left: 0px; }
+div.level1 a { padding-left: 15px; }
+div.level2 a { padding-left: 30px; }
+div.level3 a { padding-left: 45px; }
+div.level4 a { padding-left: 60px; }

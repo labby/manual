@@ -192,11 +192,13 @@ $database->build_and_execute(
 	"`chapter_id` = ".$chapter_id
 );
 
+$leptoken="&leptoken=".LEPTON_tools::get_leptoken();
+
 // Check if there is a db error, otherwise say successful
 if($database->is_error()) {
-	$admin->print_error($database->get_error(), LEPTON_URL.'/modules/manual/modify_chapter.php?page_id='.$page_id.'&section_id='.$section_id.'&chapter_id='.$id);
+	$admin->print_error($database->get_error(), LEPTON_URL.'/modules/manual/modify_chapter.php?page_id='.$page_id.'&section_id='.$section_id.'&chapter_id='.$id.$leptoken);
 } else {
-    $admin->print_success($TEXT['SUCCESS'], ADMIN_URL.'/pages/modify.php?page_id='.$page_id);
+    $admin->print_success($TEXT['SUCCESS'], ADMIN_URL.'/pages/modify.php?page_id='.$page_id.$leptoken);
 }
 
 // Print admin footer

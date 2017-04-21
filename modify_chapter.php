@@ -65,7 +65,7 @@ if (!defined('WYSIWYG_EDITOR') OR WYSIWYG_EDITOR=="none" OR !file_exists(LEPTON_
 	require_once(LEPTON_PATH."/include/jscalendar/wb-setup.php");
 ?>
 
-<form name="modify" action="<?php echo LEPTON_URL; ?>/modules/manual/save_chapter.php" method="post" style="margin: 0;">
+<form name="modify" action="<?php echo LEPTON_URL; ?>/modules/manual/save_chapter.php" method="post" >
 
 <input type="hidden" name="section_id" value="<?php echo $section_id; ?>">
 <input type="hidden" name="page_id" value="<?php echo $page_id; ?>">
@@ -73,6 +73,7 @@ if (!defined('WYSIWYG_EDITOR') OR WYSIWYG_EDITOR=="none" OR !file_exists(LEPTON_
 <input type="hidden" name="link" value="<?php echo $fetch_content['link']; ?>">
 <input type="hidden" name="position" value="<?php echo $fetch_content['position']; ?>">
 <input type="hidden" name="old_parent" value="<?php echo $fetch_content['parent']; ?>">
+<input type="hidden" name="leptoken" value="<?php echo LEPTON_tools::get_leptoken(); ?>">
 
 <table cellpadding="4" cellspacing="0" border="0" width="100%">
 <tr>

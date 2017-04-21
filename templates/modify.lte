@@ -1,0 +1,67 @@
+{% autoescape false %}
+
+<!-- module: manual - chapter page -->
+
+<div class="manual_head_title">Edit and modify the chapters</div>
+
+<div class="manual_backend_table">
+
+{% macro display_chapter( chapter_list, deep ) %}
+
+{%	for chapter_id,chapter in chapter_list %}
+
+	<div class="manual_backend_table_row">
+		<!-- edit -->
+		<div class="manual_backend_table_action level{{ deep }}">
+			<a href="{{ LEPTON_URL }}/modules/manual/modify_chapter.php?page_id={{ page_id }}&section_id={{ section_id }}&chapter_id={{ chapter.chapter_id }}&leptoken={{ leptoken }}" title="{{ TEXT.MODIFY }}">
+				<img src="{{ THEME_URL }}/images/modify_16.png" alt="Modify chapter" />
+			</a>
+		</div>
+		
+		<!-- title -->
+		<div class="manual_backend_table_title level{{ deep }}">
+			<a href="{{ LEPTON_URL }}/modules/manual/modify_chapter.php?page_id= {{ page_id }}&section_id={{ section_id }}&chapter_id={{ chapter.chapter_id }}&leptoken={{ leptoken }}" title="{{ TEXT.MODIFY }}">
+			{{ chapter.title }}
+			</a>
+		</div>
+		
+		<!-- active y/n -->
+		<div class="manual_backend_table_action">
+			<img src="{{ THEME_URL }}/images/{% if(chapter.active == 1) %}ok_16.png{% else %}minus_16.png{% endif %}"}" />
+		</div>
+		
+		<!-- pos up -->
+		<div class="manual_backend_table_action">
+			<!-- [ up ] -->
+			
+		</div>
+		
+		<!-- pos down -->
+		<div class="manual_backend_table_action">
+			<!-- [ down ] -->
+		</div>
+		
+		<!-- delete -->
+		<div class="manual_backend_table_action">
+			<a href="javascript: confirm_link('{{ TEXT.ARE_YOU_SURE }}', '{{ LEPTON_URL }}/modules/manual/delete_chapter.php?page_id={{ page_id }}&section_id={{ section_id }}&chapter_id={{ chapter.chapter_id }}');" title="{{ TEXT.DELETE }}">
+				<img src="{{ THEME_URL }}/images/delete_16.png" alt="X" />
+			</a>
+		</div>
+	</div>
+	
+				{% if (chapter.subchapters|length > 0) %}
+				{% import _self as sub_here %}	
+				{{ sub_here.display_chapter( chapter.subchapters, (deep +1) ) }} 
+				{% endif %}
+	
+{% endfor %}
+{% endmacro %}
+
+{% import _self as chapters %}	
+{{ chapters.display_chapter( chapter_tree, 0 ) }}
+
+</div>
+
+<!-- end module: manual -->
+
+{% endautoescape %}

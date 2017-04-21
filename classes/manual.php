@@ -77,6 +77,12 @@ class manual
     public function get_root( &$allChapters, $aChapterID)
     {
     	$root = "";
+    	
+    	if( !isset($allChapters[ $aChapterID ]))
+    	{
+    		return $root;
+    	}
+    	
     	do
     	{
     		$parent = $allChapters[ $aChapterID ]['parent'];
@@ -125,19 +131,6 @@ class manual
 				//	get subchapters
 				$currentChapter['subchapters'] = array();
 				
-				/*
-				foreach($sub_chapters as $subkey => $subdata) {
-					// $this->build_tree( $allChapters, $currentChapter['subchapters'], $subdata['chapter_id']);
-					if(!isset($currentChapter['subchapters'][ $subkey ]))
-					{
-						$subdata['link'] = page_link( $wb->page['link']. $this->get_root( $allChapters, $subkey ) );
-						$subdata['subchapters']	= array();
-						$currentChapter['subchapters'][ $subkey ] = $subdata;
-					
-					}
-				}
-				*/
-				
 				$aTreeStorage[ $key ] = $currentChapter;
 				
 				$sub_chapters = $this->get_sub_chapters( $allChapters, $currentChapter['chapter_id']);
@@ -148,6 +141,47 @@ class manual
 					$subdata['subchapters']	= array();
 					
 					$this->build_tree( $allChapters, $subdata['subchapters'], $subdata['chapter_id']);
+					
+					$aTreeStorage[ $key ]['subchapters'][ $subkey ] = $subdata;
+					
+					
+				}
+			}
+		}
+	}	
+	
+	/**
+	 *	The backend version for the (chapter-)tree
+	 *
+	 *	@param	array	A given array within all chapters as a linea list, pass by reference!
+	 *	@param	array	A given storage for the tree (or sub-tree), pass by reference
+	 *	@param	integer The "root" chapter we are looking for.
+	 *
+	 *	@return	nothing	As all storages are pass by reference.
+	 *
+	 */
+	public function build_backend_tree( &$allChapters, &$aTreeStorage=array() , $aChapterID=0)
+	{
+		foreach($allChapters as $key => $currentChapter)
+		{
+			if($currentChapter['parent'] == $aChapterID)
+			{
+
+				$currentChapter['title'] = strip_tags( $currentChapter['title'], ""); 				
+				
+				//	get subchapters
+				$currentChapter['subchapters'] = array();
+				
+				$aTreeStorage[ $key ] = $currentChapter;
+				
+				$sub_chapters = $this->get_sub_chapters( $allChapters, $currentChapter['chapter_id']);
+				foreach($sub_chapters as $subkey => $subdata) {
+					// $this->build_tree( $allChapters, $aTreeStorage[ $key ]['subchapters'], $subdata['chapter_id']);
+					
+					// $subdata['link'] = page_link( $wb->page['link']. $this->get_root( $allChapters, $subkey ) );
+					$subdata['subchapters']	= array();
+					
+					$this->build_backend_tree( $allChapters, $subdata['subchapters'], $subdata['chapter_id']);
 					
 					$aTreeStorage[ $key ]['subchapters'][ $subkey ] = $subdata;
 					

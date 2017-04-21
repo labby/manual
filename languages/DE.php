@@ -10,12 +10,15 @@
  *  @platform       see info.php of this module
  *
  */
-$MLTEXT['CHAPTERS'] = 'Kapitel';
-$MLTEXT['INDEX'] = '&Uuml;bersicht';
-$MLTEXT['LASTUPDATED'] = 'Zuletzt ge&auml;ndert von';
-$MLTEXT['ON'] = 'am';
-$MLTEXT['AT'] = 'um';
-$MLTEXT['UNDERCONSTRUCTION'] = 'In Bearbeitung';
-$MLTEXT['STYLE'] = 'Layout';
+
+$MLTEXT = array(
+	'CHAPTERS'	=> 'Kapitel',
+	'INDEX'		=> 'Übersicht',
+	'LASTUPDATED'	=> 'Zuletzt geändert von',
+	'ON'	=> 'am',
+	'AT'	=> 'um',
+	'UNDERCONSTRUCTION'	=> 'In Bearbeitung',
+	'STYLE'	=> 'Layout'
+);
 
 ?>
