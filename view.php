@@ -67,6 +67,13 @@ require( dirname(__FILE__)."/register_parser.php" );
 // Check if we should show the "contents" page or the actual chapter
 if(defined('CHAPTER_ID')) {
 
+	if( true === $oManual->detail_shown )
+	{
+		return true;
+	}
+	
+	$oManual->detail_shown = true;
+	
 	// Get chapter content
 	$chapter_content = array();
 	$database->execute_query(

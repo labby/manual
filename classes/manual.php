@@ -32,6 +32,11 @@ class manual
         return static::$instance;
     }
     
+    /**
+     *	To avoid doubles in the frontend
+     */
+    public $detail_shown = false;
+    
     public function get_manual_by_sectionID( $iSecId = 0 )
     {
     
