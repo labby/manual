@@ -21,15 +21,17 @@ div.manual_backend_table_row {
 	height:30px;
 }
 
+div.manual_backend_table_row div {
+	border-bottom: 1px solid #EEEEEE;
+}
+
 div.manual_backend_table_row.context_0 { background-color:#DDDDDD; }
 div.manual_backend_table_row.context_1 { background-color:#CCCCCC; }
 div.manual_backend_table_row.context_2 { background-color:#BBBBBB; }
 div.manual_backend_table_row.context_3 { background-color:#000000; }
 
 div.manual_backend_table div.manual_backend_table_action,
-div.manual_backend_table div.manual_backend_table_title
- {
-	
+div.manual_backend_table div.manual_backend_table_title {
 	display: table-cell;
 }
 
