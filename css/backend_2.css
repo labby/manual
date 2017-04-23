@@ -18,8 +18,13 @@ div.manual_backend_table {
 
 div.manual_backend_table_row {
 	display: table-row;
-	height:25px;
+	height:30px;
 }
+
+div.manual_backend_table_row.context_0 { background-color:#DDDDDD; }
+div.manual_backend_table_row.context_1 { background-color:#CCCCCC; }
+div.manual_backend_table_row.context_2 { background-color:#BBBBBB; }
+div.manual_backend_table_row.context_3 { background-color:#000000; }
 
 div.manual_backend_table div.manual_backend_table_action,
 div.manual_backend_table div.manual_backend_table_title
@@ -29,14 +34,14 @@ div.manual_backend_table div.manual_backend_table_title
 }
 
 div.manual_backend_table_action {
-	width:50px;
+	width:80px;
 	display: table-cell;
 	text-align: left;
 }
 
 div.manual_backend_table_action:first-child {
 	text-align:left;
-	padding: 0px;
+	padding: 7px 0 0 10px;
 	width:20px;
 }
 
@@ -57,3 +62,14 @@ div.level1 a { padding-left: 15px; }
 div.level2 a { padding-left: 30px; }
 div.level3 a { padding-left: 45px; }
 div.level4 a { padding-left: 60px; }
+
+.pos.level1 { padding-left:15px; }
+.pos.level2 { padding-left:30px; }
+.pos.level3 { padding-left:30px; }
+
+.pos a {
+	width:25px
+	height:20px;;
+	padding:0;
+	margin:0;
+}

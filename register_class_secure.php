@@ -27,6 +27,7 @@ $files_to_register = array(
 	$basepath.'modify_settings.php',
 	$basepath.'move_down.php',
 	$basepath.'move_up.php',
+	$basepath.'move.php',
 	$basepath.'save_chapter.php',
 	$basepath.'save_settings.php',
 	$basepath.'uninstall.php',
