@@ -15,23 +15,21 @@ div.manual_backend_table {
 	width: 100%;
 }
 
-
 ul.manual_backend_table_list {
-	list-style-type: none;
 	display:table;
-	outline: 1px solid #FFFFFF;
+	width:100%;
 }
 
-ul.manual_backend_table_list.context_0 { margin-left:0px; background-color: #DDDDDD;}
-ul.manual_backend_table_list.context_1 { margin-left:20px; background-color: #CCCCCC; float:right;}
-ul.manual_backend_table_list.context_2 { margin-left:20px; background-color: #BBBBBB; float:right;}
-ul.manual_backend_table_list.context_3 { margin-left:20px; background-color: #AAAAAA; float:right;}
+ul.manual_backend_table_list.context_0 { margin:0px; background-color: #DDDDDD;}
+ul.manual_backend_table_list.context_1 { margin: 0 0 0 20px; background-color: #CCCCCC; width: auto; }
+ul.manual_backend_table_list.context_2 { margin: 0 0 0 20px; background-color: #BBBBBB; width: auto;}
+ul.manual_backend_table_list.context_3 { margin: 0 0 0 20px; background-color: #AAAAAA; width: auto;}
 
 ul.manual_backend_table_list.context_0:first-child,
 ul.manual_backend_table_list.context_1:first-child,
 ul.manual_backend_table_list.context_2:first-child,
 ul.manual_backend_table_list.context_3:first-child {
-	padding-top:6px;
+	padding-bottom:14px;
 }
 
 ul.manual_backend_table_list.context_0:last-child,
