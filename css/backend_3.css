@@ -20,10 +20,10 @@ ul.manual_backend_table_list {
 	width:100%;
 }
 
-ul.manual_backend_table_list.context_0 { margin:0px; background-color: #DDDDDD;}
-ul.manual_backend_table_list.context_1 { margin: 0 0 0 20px; background-color: #CCCCCC; width: auto; }
-ul.manual_backend_table_list.context_2 { margin: 0 0 0 20px; background-color: #BBBBBB; width: auto;}
-ul.manual_backend_table_list.context_3 { margin: 0 0 0 20px; background-color: #AAAAAA; width: auto;}
+li.context_0 div { padding: 0 0 0 0; }
+li.context_1 div.first::before { content:" "; width:60px; display:block; float:left; }
+li.context_2 div.first::before { content:" "; width:80px; display:block; float:left; }
+li.context_3 div.first::before { content:" "; width:100px; display:block; float:left; }
 
 ul.manual_backend_table_list.context_0:first-child,
 ul.manual_backend_table_list.context_1:first-child,
@@ -55,12 +55,11 @@ ul.manual_backend_table_list li div.manual_backend_table_title {
 
 ul.manual_backend_table_list li div.manual_backend_table_action {
 	
-	width: 50px;
+	width: 40px;
 	text-align: center;
 }
 
 ul.manual_backend_table_list li div.manual_backend_table_action:first-child {
 	text-align: left;
-	padding-left:5px;
 	padding-top: 5px;
 }

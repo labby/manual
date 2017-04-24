@@ -12,9 +12,9 @@
 
 	{%	for chapter_id,chapter in chapter_list %}
 
-	<li>
+	<li class="context_{{ deep }}">
 		<!-- edit -->
-		<div class="manual_backend_table_action">
+		<div class="manual_backend_table_action first">
 			<a href="{{ LEPTON_URL }}/modules/manual/modify_chapter.php?page_id={{ page_id }}&section_id={{ section_id }}&chapter_id={{ chapter.chapter_id }}&leptoken={{ leptoken }}" title="{{ TEXT.MODIFY }}">
 				<img src="{{ THEME_URL }}/images/modify_16.png" alt="Modify chapter" />
 			</a>
