@@ -8,18 +8,20 @@
 
 {% macro display_chapter( chapter_list, deep ) %}
 
-{%	for chapter_id,chapter in chapter_list %}
+	<ul class="manual_backend_table_list context_{{ deep }}">
 
-	<div class="manual_backend_table_row context_{{ deep }}">
+	{%	for chapter_id,chapter in chapter_list %}
+
+	<li>
 		<!-- edit -->
-		<div class="manual_backend_table_action level{{ deep }}">
+		<div class="manual_backend_table_action">
 			<a href="{{ LEPTON_URL }}/modules/manual/modify_chapter.php?page_id={{ page_id }}&section_id={{ section_id }}&chapter_id={{ chapter.chapter_id }}&leptoken={{ leptoken }}" title="{{ TEXT.MODIFY }}">
 				<img src="{{ THEME_URL }}/images/modify_16.png" alt="Modify chapter" />
 			</a>
 		</div>
 		
 		<!-- title -->
-		<div class="manual_backend_table_title level{{ deep }}">
+		<div class="manual_backend_table_title">
 			<a href="{{ LEPTON_URL }}/modules/manual/modify_chapter.php?page_id= {{ page_id }}&section_id={{ section_id }}&chapter_id={{ chapter.chapter_id }}&leptoken={{ leptoken }}" title="{{ TEXT.MODIFY }}">
 			{{ chapter.title }}
 			</a>
@@ -27,11 +29,11 @@
 		
 		<!-- active y/n -->
 		<div class="manual_backend_table_action">
-			<img src="{{ THEME_URL }}/images/{% if(chapter.active == 1) %}ok_16.png{% else %}minus_16.png{% endif %}"}" />
+			<img src="{{ THEME_URL }}/images/{% if(chapter.active == 1) %}ok_16.png{% else %}minus_16.png{% endif %}" />
 		</div>
 		
 		
-		<div class="manual_backend_table_action pos level{{ deep }}">
+		<div class="manual_backend_table_action">
 			<!-- pos up -->
 			{% if( chapter.position-1 > 0) %}
 			<a href="{{ LEPTON_URL }}/modules/manual/move.php?page_id={{ page_id }}&section_id={{ section_id }}&chapter_id={{ chapter.chapter_id }}&pos={{ chapter.position - 1 }}">
@@ -57,14 +59,21 @@
 				<img src="{{ THEME_URL }}/images/delete_16.png" alt="X" />
 			</a>
 		</div>
-	</div>
+	
+	</li>
 	
 	{% if (chapter.subchapters|length > 0) %}
+		<li>
+		
 		{% import _self as sub_here %}	
-		{{ sub_here.display_chapter( chapter.subchapters, (deep +1) ) }} 
+		{{ sub_here.display_chapter( chapter.subchapters, (deep +1) ) }}
+		
+		</li> 
 	{% endif %}
 	
-{% endfor %}
+	{% endfor %}
+</ul>
+
 {% endmacro %}
 
 {% import _self as chapters %}	

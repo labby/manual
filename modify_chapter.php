@@ -45,10 +45,10 @@ $all_chapters = $oManual->get_manual_by_sectionID( $section_id );
 // die(LEPTON_tools::display($all_chapters));
 	
 // Get current values for this chapter-id
-$fetch_content = $all_chapters[ $chapter_id ];
+$actual_chapter_content = $all_chapters[ $chapter_id ];
 
-// $chapter_id = $fetch_content['chapter_id'];
-$content = (htmlspecialchars($fetch_content['content']));
+// $chapter_id = $actual_chapter_content['chapter_id'];
+$content = (htmlspecialchars($actual_chapter_content['content']));
 
 if (!defined('WYSIWYG_EDITOR') OR WYSIWYG_EDITOR=="none" OR !file_exists(LEPTON_PATH.'/modules/'.WYSIWYG_EDITOR.'/include.php')) {
 	function show_wysiwyg_editor($name,$id,$content,$width,$height) {
@@ -58,28 +58,30 @@ if (!defined('WYSIWYG_EDITOR') OR WYSIWYG_EDITOR=="none" OR !file_exists(LEPTON_
 	$id_list=array("content");
 	require(LEPTON_PATH.'/modules/'.WYSIWYG_EDITOR.'/include.php');
 }
-?>
+// include jscalendar-setup
+$jscal_use_time = true; // whether to use a clock, too
+require_once(LEPTON_PATH."/include/jscalendar/wb-setup.php");
 
-<?php // include jscalendar-setup
-	$jscal_use_time = true; // whether to use a clock, too
-	require_once(LEPTON_PATH."/include/jscalendar/wb-setup.php");
+$leptoken = LEPTON_tools::get_leptoken();
+
 ?>
 
 <form name="modify" action="<?php echo LEPTON_URL; ?>/modules/manual/save_chapter.php" method="post" >
 
-<input type="hidden" name="section_id" value="<?php echo $section_id; ?>">
-<input type="hidden" name="page_id" value="<?php echo $page_id; ?>">
-<input type="hidden" name="chapter_id" value="<?php echo $chapter_id; ?>">
-<input type="hidden" name="link" value="<?php echo $fetch_content['link']; ?>">
-<input type="hidden" name="position" value="<?php echo $fetch_content['position']; ?>">
-<input type="hidden" name="old_parent" value="<?php echo $fetch_content['parent']; ?>">
-<input type="hidden" name="leptoken" value="<?php echo LEPTON_tools::get_leptoken(); ?>">
+<input type="hidden" name="section_id" value="<?php echo $section_id; ?>" />
+<input type="hidden" name="page_id" value="<?php echo $page_id; ?>" />
+<input type="hidden" name="chapter_id" value="<?php echo $chapter_id; ?>" />
+<input type="hidden" name="link" value="<?php echo $actual_chapter_content['link']; ?>" />
+<input type="hidden" name="position" value="<?php echo $actual_chapter_content['position']; ?>" />
+<input type="hidden" name="old_parent" value="<?php echo $actual_chapter_content['parent']; ?>" />
+<input type="hidden" name="leptoken" value="<?php echo $leptoken; ?>" />
+<input type="hidden" name="active" id="active" value="0" />
 
 <table cellpadding="4" cellspacing="0" border="0" width="100%">
 <tr>
 	<td width="80"><?php echo $TEXT['TITLE']; ?>:</td>
 	<td>
-		<input type="text" name="title" value="<?php echo stripslashes($fetch_content['title']); ?>" style="width: 100%;" maxlength="255" />
+		<input type="text" name="title" value="<?php echo stripslashes($actual_chapter_content['title']); ?>" style="width: 100%;" maxlength="255" />
 	</td>
 </tr>
 <tr>
@@ -90,7 +92,7 @@ if (!defined('WYSIWYG_EDITOR') OR WYSIWYG_EDITOR=="none" OR !file_exists(LEPTON_
 			<?php
 
 function parent_list($parent, $deep=0) {
-	global $all_chapters, $chapter_id, $fetch_content;
+	global $all_chapters, $chapter_id, $actual_chapter_content;
 	$subchapter_marker = "";
 	for($i=0; $i< $deep; $i++) $subchapter_marker .= "- ";
 	
@@ -101,7 +103,7 @@ function parent_list($parent, $deep=0) {
 		
 		if($parent == $val['parent'])
 		{
-			echo "\n<option value='".$key."' ".( ($key == $chapter_id) ? " disabled='disabled' " : "").( ($key == $fetch_content['parent']) ? " selected='selected' " : ""  ).">".$subchapter_marker.$val['title']."</option>\n";
+			echo "\n<option value='".$key."' ".( ($key == $chapter_id) ? " disabled='disabled' " : "").( ($key == $actual_chapter_content['parent']) ? " selected='selected' " : ""  ).">".$subchapter_marker.$val['title']."</option>\n";
 		
 			if($deep < 3)
 			{
@@ -121,15 +123,7 @@ parent_list(0,1);
 <tr>
 	<td><?php echo $TEXT['ACTIVE']; ?>:</td>
 	<td>
-		<input type="radio" name="active" id="active_true" value="1" <?php if($fetch_content['active'] == 1) { echo ' checked'; } ?> />
-		<a href="#" onclick="javascript: document.getElementById('active_true').checked = true;">
-		<?php echo $TEXT['YES']; ?>
-		</a>
-		-
-		<input type="radio" name="active" id="active_false" value="0" <?php if($fetch_content['active'] == 0) { echo ' checked'; } ?> />
-		<a href="#" onclick="javascript: document.getElementById('active_false').checked = true;">
-		<?php echo $TEXT['NO']; ?>
-		</a>
+		<input type="checkbox" name="active" id="active" value="1" <?php if($actual_chapter_content['active'] == 1) { echo ' checked'; } ?> />
 	</td>
 </tr>
 <tr>
@@ -142,7 +136,7 @@ parent_list(0,1);
 			if($users->numRows() > 0) {
 				while($user = $users->fetchRow()) {
 					?>
-					<option value="<?php echo $user['user_id']; ?>"<?php if($fetch_content['modified_by'] == $user['user_id']) { echo ' selected'; } ?>><?php echo $user['display_name']; ?></option>
+					<option value="<?php echo $user['user_id']; ?>"<?php if($actual_chapter_content['modified_by'] == $user['user_id']) { echo ' selected'; } ?>><?php echo $user['display_name']; ?></option>
 					<?php
 				}
 			}
@@ -152,7 +146,7 @@ parent_list(0,1);
 </tr>
 <tr>
 	<td><?php echo $TEXT['DATE']; ?>:</td>
-	<td><input type="text" id="modified_when" name="modified_when" value="<?php if($fetch_content['modified_when']==0) echo ""; else echo date($jscal_format, $fetch_content['modified_when'])?>" style="width: 120px;" />
+	<td><input type="text" id="modified_when" name="modified_when" value="<?php if($actual_chapter_content['modified_when']==0) echo ""; else echo date($jscal_format, $actual_chapter_content['modified_when'])?>" style="width: 120px;" />
 		<img src="<?php echo THEME_URL ?>/images/clock_16.png" id="trigger_start" style="cursor: pointer;" title="<?php echo $TEXT['CALENDAR']; ?>" onmouseover="this.style.background='lightgrey';" onmouseout="this.style.background=''" />
 		<img src="<?php echo THEME_URL ?>/images/clock_del_16.png" style="cursor: pointer;" title="<?php echo $TEXT['DELETE_DATE']; ?>" onmouseover="this.style.background='lightgrey';" onmouseout="this.style.background=''" onclick="document.modify.modified_when.value=''" />
 	</td>
@@ -160,7 +154,7 @@ parent_list(0,1);
 <tr>
 	<td valign="top"><?php echo $TEXT['DESCRIPTION']; ?>:</td>
 	<td>
-		<textarea id="no_wysiwyg" name="description" style="width: 100%; height: 50px;"><?php echo stripslashes($fetch_content['description']); ?></textarea>
+		<textarea id="no_wysiwyg" name="description" style="width: 100%; height: 50px;"><?php echo stripslashes($actual_chapter_content['description']); ?></textarea>
 	</td>
 </tr>
 <tr>
@@ -178,7 +172,7 @@ parent_list(0,1);
 			<input name="save" type="submit" value="<?php echo $TEXT['SAVE']; ?>" style="width: 100px; margin-top: 5px;"></form>
 		</td>
 		<td align="right">
-			<input class="cancel" type="button" value="<?php echo $TEXT['CANCEL']; ?>" onclick="javascript: window.location = '<?php echo ADMIN_URL; ?>/pages/modify.php?page_id=<?php echo $page_id; ?>';" style="width: 100px; margin-top: 5px;" />
+			<input class="cancel" type="button" value="<?php echo $TEXT['CANCEL']; ?>" onclick="javascript: window.location = '<?php echo ADMIN_URL; ?>/pages/modify.php?page_id=<?php echo $page_id; ?>&leptoken=<?php echo $leptoken; ?>';" style="width: 100px; margin-top: 5px;" />
 		</td>
 	</tr>
 </table>

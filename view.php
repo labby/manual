@@ -124,6 +124,7 @@ if(defined('CHAPTER_ID')) {
 		 *	Geet the actual relative list position
 		 *
 		 */
+		$current_pos = 0;
 		for( $i=0; $i < $num_of_siblings; $i++ ){
 			if( $siblings[ $i]['chapter_id'] === $chapter_content['chapter_id'] )
 			{

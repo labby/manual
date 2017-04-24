@@ -36,11 +36,18 @@ require(LEPTON_PATH.'/modules/admin.php');
 // Include the ordering class
 require(LEPTON_PATH.'/modules/manual/class.order.php');
 
-// Get new order
-$order = new order(TABLE_PREFIX.'mod_manual_chapters', 'position', 'chapter_id', 'parent', $section_id);
-$position = $order->get_new(0);
+//	Get the "new" position ... append to the last of the current page/section
+$last_chapter = array();
+$database->execute_query(
+	"SELECT `position` FROM `".TABLE_PREFIX."mod_manual_chapters` WHERE `section_id`=".$section_id." AND `page_id`=".$page_id." AND `parent`=0 ORDER BY `position` DESC limit 1",
+	true,
+	$last_chapter,
+	false
+);
 
-// Insert new row into database
+$position = (0 === count($last_chapter)) ? 1 : $last_chapter['position'] +1; 
+
+// Insert new row into the database
 $fields = array(
 	'section_id'	=> $section_id,
 	'page_id'	=> $page_id,

@@ -14,13 +14,12 @@
 class manual_position
 
 {    
-    static function move_to( $aChapterID=0, $aTargetPosition=0 )
+    public static function move_to( $aChapterID=0, $aTargetPosition=0 )
     {
   		$database = LEPTON_database::getInstance();
   		
   		if( 0 === $aChapterID) return false;
   		if( 0 === $aTargetPosition) return false;
-  		
   		
   		$chapter_info = array();
   		$database->execute_query(
@@ -55,6 +54,30 @@ class manual_position
     	
     	return true;
     }
+
+	public static function rearrange( $aSectionID = 0, $aRootID = 0 )
+	{
+		$database = LEPTON_database::getInstance();
+		
+		$all = array();
+		$database->execute_query(
+			"SELECT `chapter_id`,`position` FROM `".TABLE_PREFIX."mod_manual_chapters` WHERE (`parent`=".$aRootID." AND `section_id`=".$aSectionID.") ORDER BY `position`",
+			true,
+			$all,
+			true
+		);
+		
+		$new_position = 1;
+		foreach($all as $chapter)
+		{
+			$database->simple_query(
+				"UPDATE `".TABLE_PREFIX."mod_manual_chapters` set `position`=? WHERE `chapter_id`=?",
+				array( $new_position, $chapter['chapter_id'] )
+			);
+			$new_position++;
+			
+			//	Any "sub-chapters" for this root-element?
+			self::rearrange( $aSectionID, $chapter['chapter_id'] );
+		}
+	}
 }
-
-

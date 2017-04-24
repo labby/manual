@@ -18,7 +18,8 @@ $MLTEXT = array(
 	'ON'	=> 'am',
 	'AT'	=> 'um',
 	'UNDERCONSTRUCTION'	=> 'In Bearbeitung',
-	'STYLE'	=> 'Layout'
+	'STYLE'	=> 'Layout',
+	'ARE_YOU_SURE'	=> 'Wollen Sie wirklich das Kapitel »%s« löschen?\n\nDas kann nicht widerufen werden!'
 );
 
 ?>

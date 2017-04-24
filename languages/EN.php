@@ -18,7 +18,8 @@ $MLTEXT = array(
 	'AT'	=> 'at',
 	'UNDERCONSTRUCTION'	=> 'Under Construction',
 	'STYLE'	=> 'Manual Style',
-	'SETTINGS'	=> 'Manual Settings'
+	'SETTINGS'	=> 'Manual Settings',
+	'ARE_YOU_SURE'	=> 'Are you sure you want to delete \nthe chapter “%s”?\n\nThis cannot be undone!'
 );
 
 ?>

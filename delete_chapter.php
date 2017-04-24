@@ -41,30 +41,74 @@ if(!isset($_GET['chapter_id']) OR !is_numeric($_GET['chapter_id'])) {
 $update_when_modified = true; // Tells script to update when this page was last updated
 require(LEPTON_PATH.'/modules/admin.php');
 
-// Get chapter details
-$query_details = $database->query("SELECT * FROM ".TABLE_PREFIX."mod_manual_chapters WHERE chapter_id = '$chapter_id'");
-if($query_details->numRows() > 0) {
-	$get_details = $query_details->fetchRow();
-	$parent = $get_details['parent'];
-} else {
+
+$oManual = manual::getInstance();
+$all_chapters = $oManual->get_manual_by_sectionID( $section_id );
+// die(LEPTON_tools::display($all_chapters));
+
+// Get current values for this chapter-id
+if( !isset($all_chapters[ $chapter_id ]))
+{
 	$admin->print_error($TEXT['NOT_FOUND'], ADMIN_URL.'/pages/modify.php?page_id='.$page_id);
+} else {
+	$actual_chapter_content = $all_chapters[ $chapter_id ];
 }
 
 // Unlink chapter access file
-if(is_writable(LEPTON_PATH.PAGES_DIRECTORY.$get_details['link'].PAGE_EXTENSION)) {
-	unlink(LEPTON_PATH.PAGES_DIRECTORY.$get_details['link'].PAGE_EXTENSION);
-	if(is_writable(LEPTON_PATH.PAGES_DIRECTORY.$get_details['link'])) {
-		rmdir(LEPTON_PATH.PAGES_DIRECTORY.$get_details['link']);
+$root_page_link = $database->get_one("SELECT `link` FROM `".TABLE_PREFIX."pages` WHERE `page_id`=".$page_id);
+$root = $oManual->get_root( $all_chapters, $chapter_id);
+$full_path = LEPTON_PATH.PAGES_DIRECTORY.$root_page_link.$root.".php";
+
+if(file_exists( $full_path ))
+{
+	unlink($full_path);
+}
+
+// Related folder?
+$full_path = LEPTON_PATH.PAGES_DIRECTORY.$root_page_link.$root."/";
+if(file_exists($full_path))
+{
+	LEPTON_tools::register("rm_full_dir");
+	rm_full_dir( $full_path );
+}
+
+//	get the "childs"
+$all_childs = array();
+
+function manual_get_childs( &$allChildsStorage, $aID )
+{
+	global $all_chapters;
+	
+	foreach($all_chapters as $key=>$ref)
+	{
+		if($key === $aID) continue;
+		
+		if( $ref['parent']	=== $aID)
+		{
+			$allChildsStorage[] = $ref['chapter_id'];
+			
+			manual_get_childs( $allChildsStorage, $ref['chapter_id'] );
+		}
 	}
 }
 
-// Delete chapter
-$database->query("DELETE FROM ".TABLE_PREFIX."mod_manual_chapters WHERE chapter_id = '$chapter_id' LIMIT 1");
+manual_get_childs( $all_childs, $chapter_id ); 
 
-// Include the ordering class or clean-up ordering
-require(LEPTON_PATH.'/modules/manual/class.order.php');
-$order = new order(TABLE_PREFIX.'mod_manual_chapters', 'position', 'chapter_id', 'parent', $section_id);
-$order->clean($get_details['parent']);
+foreach( $all_childs as $temp_id )
+{
+	$database->simple_query(
+		"DELETE FROM `".TABLE_PREFIX."mod_manual_chapters` WHERE `chapter_id` = ? LIMIT 1",
+		array( $temp_id )
+	);
+}
+
+// Delete chapter entry in the database
+$database->simple_query(
+	"DELETE FROM `".TABLE_PREFIX."mod_manual_chapters` WHERE `chapter_id` = ? LIMIT 1",
+	array( $chapter_id )
+);
+
+manual_position::rearrange( $section_id, 0 );
 
 // Check if there is a db error, otherwise say successful
 if($database->is_error()) {

@@ -67,11 +67,11 @@ div.level4 a { padding-left: 60px; }
 
 .pos.level1 { padding-left:15px; }
 .pos.level2 { padding-left:30px; }
-.pos.level3 { padding-left:30px; }
+.pos.level3 { padding-left:45px; }
 
 .pos a {
-	width:25px
-	height:20px;;
+	width:25px;
+	height:20px;
 	padding:0;
 	margin:0;
 }

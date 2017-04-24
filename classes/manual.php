@@ -43,7 +43,7 @@ class manual
     	$database = LEPTON_database::getInstance();
     	$all = array();
     	$database->execute_query(
-    		"SELECT * FROM `".TABLE_PREFIX."mod_manual_chapters` WHERE `section_id`=".$iSecId." ORDER BY `parent`,`position`",
+    		"SELECT * FROM `".TABLE_PREFIX."mod_manual_chapters` WHERE `section_id`=".$iSecId." AND `active`=1 ORDER BY `parent`,`position`",
     		true,
     		$all,
     		true
@@ -85,7 +85,7 @@ class manual
     	
     	if( !isset($allChapters[ $aChapterID ]))
     	{
-    		return $root;
+    		return "*****".$root;
     	}
     	
     	do
@@ -167,12 +167,16 @@ class manual
 	 */
 	public function build_backend_tree( &$allChapters, &$aTreeStorage=array() , $aChapterID=0)
 	{
+		global $MLTEXT;
+		
 		foreach($allChapters as $key => $currentChapter)
 		{
 			if($currentChapter['parent'] == $aChapterID)
 			{
 
-				$currentChapter['title'] = strip_tags( $currentChapter['title'], ""); 				
+				$currentChapter['title'] = strip_tags( $currentChapter['title'], "");
+				
+				$currentChapter['are_you_sure'] = sprintf( $MLTEXT['ARE_YOU_SURE'], $currentChapter['title']); 
 				
 				//	get subchapters
 				$currentChapter['subchapters'] = array();
@@ -185,6 +189,7 @@ class manual
 					
 					// $subdata['link'] = page_link( $wb->page['link']. $this->get_root( $allChapters, $subkey ) );
 					$subdata['subchapters']	= array();
+					$subdata['are_you_sure'] = sprintf( $MLTEXT['ARE_YOU_SURE'], $subdata['title']);
 					
 					$this->build_backend_tree( $allChapters, $subdata['subchapters'], $subdata['chapter_id']);
 					
