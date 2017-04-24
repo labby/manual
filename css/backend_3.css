@@ -20,25 +20,23 @@ ul.manual_backend_table_list {
 	width:100%;
 }
 
-li.context_0 div { padding: 0 0 0 0; }
+ul.manual_backend_table_list li {
+	border-bottom: 1px solid #DDDDDD;
+	background-color: #CCCCCC;
+	margin-bottom: 4px;
+}
+
+ul.manual_backend_table_list li:last-child {
+	border-bottom: none;
+}
+
 li.context_1 div.first::before { content:" "; width:60px; display:block; float:left; }
 li.context_2 div.first::before { content:" "; width:80px; display:block; float:left; }
 li.context_3 div.first::before { content:" "; width:100px; display:block; float:left; }
 
-ul.manual_backend_table_list.context_0:first-child,
-ul.manual_backend_table_list.context_1:first-child,
-ul.manual_backend_table_list.context_2:first-child,
-ul.manual_backend_table_list.context_3:first-child {
-	padding-bottom:14px;
+div.first a {
+	padding-left: 4px;
 }
-
-ul.manual_backend_table_list.context_0:last-child,
-ul.manual_backend_table_list.context_1:last-child,
-ul.manual_backend_table_list.context_2:last-child,
-ul.manual_backend_table_list.context_3:last-child {
-	padding-bottom:14px;
-}
-
 ul.manual_backend_table_list li {
 	width: 100%;
 	height:23px;
