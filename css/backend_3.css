@@ -23,7 +23,6 @@ ul.manual_backend_table_list {
 ul.manual_backend_table_list li {
 	border-bottom: 1px solid #DDDDDD;
 	background-color: #CCCCCC;
-	margin-bottom: 4px;
 }
 
 ul.manual_backend_table_list li:last-child {
@@ -34,8 +33,8 @@ li.context_1 div.first::before { content:" "; width:60px; display:block; float:l
 li.context_2 div.first::before { content:" "; width:80px; display:block; float:left; }
 li.context_3 div.first::before { content:" "; width:100px; display:block; float:left; }
 
-div.first a {
-	padding-left: 4px;
+li a:hover {
+	color: #FFFFFF;
 }
 ul.manual_backend_table_list li {
 	width: 100%;

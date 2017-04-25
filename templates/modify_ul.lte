@@ -8,7 +8,7 @@
 
 {% macro display_chapter( chapter_list, deep ) %}
 
-	<ul class="manual_backend_table_list context_{{ deep }}">
+	<ul class="manual_backend_table_list context_{{ deep }}" >
 
 	{%	for chapter_id,chapter in chapter_list %}
 
