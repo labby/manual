@@ -114,6 +114,7 @@ p.MLchapt_description {
 	font-style: italic;
 	font-size: 12px;
 	margin-left:20px;
+	white-space: pre;
 }
 
 ol.level0 { margin-left: 10px; }

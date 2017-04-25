@@ -37,13 +37,15 @@ class manual
      */
     public $detail_shown = false;
     
-    public function get_manual_by_sectionID( $iSecId = 0 )
+    public function get_manual_by_sectionID( $iSecId = 0, $bShowAll = true )
     {
     
+    	$show_only_actives = ($bShowAll === true) ? "" : "AND `active`=1";
+    	
     	$database = LEPTON_database::getInstance();
     	$all = array();
     	$database->execute_query(
-    		"SELECT * FROM `".TABLE_PREFIX."mod_manual_chapters` WHERE `section_id`=".$iSecId." AND `active`=1 ORDER BY `parent`,`position`",
+    		"SELECT * FROM `".TABLE_PREFIX."mod_manual_chapters` WHERE `section_id`=".$iSecId." ".$show_only_actives." ORDER BY `parent`,`position`",
     		true,
     		$all,
     		true
@@ -85,7 +87,7 @@ class manual
     	
     	if( !isset($allChapters[ $aChapterID ]))
     	{
-    		return "*****".$root;
+    		return $root;
     	}
     	
     	do
@@ -199,6 +201,34 @@ class manual
 				}
 			}
 		}
+	}
+	
+	public function get_root_link( $aChapterID = 0)
+	{
+	
+		if($aChapterID === 0) return "";
+		
+		$database = LEPTON_database::getInstance();
+		
+		$chapter = array();
+		$database->execute_query(
+			"SELECT * FROM `".TABLE_PREFIX."mod_manual_chapters` WHERE `chapter_id`	= ".$aChapterID,
+			true,
+			$chapter,
+			false
+		);
+		
+		if(count($chapter) === 0) return "";
+		
+		$page_root_link = $database->get_one( "SELECT `link` FROM `".TABLE_PREFIX."pages` WHERE `page_id`=".$chapter['page_id']);
+		
+		$all = $this->get_manual_by_sectionID( $chapter['section_id'], false );
+	
+		$root = $this->get_root( $all, $aChapterID );
+		
+		$full_url = LEPTON_URL.PAGES_DIRECTORY.$page_root_link.$root.".php";
+		
+		return "<a href='".$full_url."'>".$chapter['title']."</a>";
 	}
 }
 

@@ -14,3 +14,20 @@ http://www.lepton-cms.com/lepador/modules/manual.php
 ## Changelog
 Detailed Changelog can be seen on
 https://github.com/labby/manual
+
+## droplet
+
+A handy droplet can be
+
+```code
+if(!isset($id)) return "";
+
+$oManual = manual::getInstance();
+return $oManual->get_root_link( $id );
+```
+
+Example given (droplet named ”manual_link“):
+
+```
+LEPTON_tools[[manual_link?id=14]]
+```

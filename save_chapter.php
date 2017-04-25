@@ -48,9 +48,9 @@ require_once(LEPTON_PATH."/include/jscalendar/jscalendar-functions.php");
 if($admin->get_post('title') == '') {
 	$admin->print_error($MESSAGE['GENERIC']['FILL_IN_ALL'], LEPTON_URL.'/modules/manual/modify_chapter.php?page_id='.$page_id.'&section_id='.$section_id.'&chapter_id='.$id);
 } else {
-	$title 	= addslashes($admin->get_post('title'));
-	$description = addslashes($admin->get_post('description'));
-	$content =addslashes($admin->get_post('content'));	
+	$title 	= ($admin->get_post('title'));
+	$description = ($admin->get_post('description'));
+	$content = ($admin->get_post('content'));	
 	$parent = $admin->get_post('parent');
 	$old_parent = $admin->get_post('old_parent');
 	$active = $admin->get_post('active');

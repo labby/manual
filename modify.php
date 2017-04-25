@@ -82,7 +82,7 @@ $database->simple_query(
 	);
 	
 	echo $parser->render(
-		"@manual/modify_ul.lte",
+		"@manual/modify_semantic.lte",
 		$page_values
 	);
 	

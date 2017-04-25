@@ -50,7 +50,7 @@ if(count($fetch_settings) > 0) {
 }		
 
 $oManual = manual::getInstance();
-$all_chapters = $oManual->get_manual_by_sectionID( $section_id );
+$all_chapters = $oManual->get_manual_by_sectionID( $section_id, false);
 
 if( 0 === count($all_chapters) )
 {
