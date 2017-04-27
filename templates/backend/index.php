@@ -30,46 +30,4 @@ if (defined('LEPTON_PATH')) {
 }
 // end include class.secure.php
 
-//	removes empty entries from the table so they will not be displayed
-//		Aldus: 2017-04-27 - Mit einem Fuß im Grab!
-$database->simple_query(
-	"DELETE FROM `".TABLE_PREFIX."mod_manual_chapters` WHERE `page_id` = '?' and title=''",
-	array($page_id)
-);
-
-//	Load Language file
-require_once __DIR__."/register_language.php";
-
-/**
- *	Get the template engine
- */
-require( dirname(__FILE__)."/register_parser.php" );
-
-/**
- *	Get the manual data
- */
-$oManual = manual::getInstance();
-$all_chapters = $oManual->get_manual_by_sectionID( $section_id );
-
-$chapter_tree = array();
-$oManual->build_backend_tree( $all_chapters, $chapter_tree, 0);
-
-//	Add some vars as globals as we need them inside a recursive macro inside the backend-template.
-$oTwig->registerGlobals( array(
-	"section_id"	=> $section_id,
-	"page_id"		=> $page_id,
-	"leptoken"		=> LEPTON_tools::get_leptoken(),
-	"TEXT"			=> $TEXT,
-	"MLTEXT"		=> $MLTEXT
-	)
-);
-	
-$page_values = array(
-	'chapter_tree'	=> $chapter_tree
-);
-
-echo $oTwig->render(
-	"@manual/modify_semantic.lte",
-	$page_values
-);
-
+?>

@@ -230,6 +230,16 @@ class manual
 		
 		return "<a href='".$full_url."'>".$chapter['title']."</a>";
 	}
+	
+	public static function parseStr( &$sAnyString )
+	{
+		$sAnyString = str_replace(
+			array("[code]", "[/code]"),
+			array("<code class='manual_code'>", "</code>"),
+			$sAnyString
+		);
+	
+	}
 }
 
 

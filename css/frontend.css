@@ -194,3 +194,19 @@ div.MLnavi_next {
 div.MLnavi_last {
 	text-align: right;
 }
+
+code.manual_code {
+	display:block;
+	max-width: 50%;
+	background-color: #EEEEEE;
+	color: #000000;
+	padding: 10px;
+	word-wrap: pre;
+	font-family: monospace;
+	font-size: 12px;
+	line-height: 1.5em;
+	border: 1px solid #AAAAAA;
+	-webkit-border-radius: 16px;
+	-moz-border-radius: 16px;
+	border-radius: 16px;
+}

@@ -2,6 +2,17 @@
 
 <!-- module: manual - chapter page -->
 
+<table cellpadding="0" cellspacing="0" border="0" width="100%" style="border-bottom: 1px solid #AAAAAA;">
+<tr>
+	<td width="50%">
+		<input type="button" name="add_chapter" value="{{ TEXT.ADD }} {{ MLTEXT.CHAPTERS }}" onclick="javascript: window.location = '{{ LEPTON_URL }}/modules/manual/add_chapter.php?page_id={{ page_id }}&section_id={{ section_id }}';" style="width: 100%;" />	
+	</td>
+	<td>
+		<input type="button" name="settings" value="{{ TEXT.SETTINGS }}" onclick="javascript: window.location = '{{ LEPTON_URL }}/modules/manual/modify_settings.php?page_id={{page_id }}&section_id={{ section_id }}';" style="width: 100%;" />
+	</td>
+</tr>
+</table>
+
 <h4 class="ui header">Edit and modify the chapters</h4>
 
 <div class="ui container">

@@ -61,7 +61,6 @@ if( 0 === count($all_chapters) )
 /**
  *	Get the template engine
  */
-global $parser, $loader;
 require( dirname(__FILE__)."/register_parser.php" );
 	
 // Check if we should show the "contents" page or the actual chapter
@@ -82,6 +81,8 @@ if(defined('CHAPTER_ID')) {
 		$chapter_content,
 		false
 	);
+	
+	$oManual->parseStr( $chapter_content['content'] );
 	
 	//	pre process some data
 	$wb->preprocess( $chapter_content['content'] );
@@ -186,7 +187,7 @@ if(defined('CHAPTER_ID')) {
 		'sibling_list'		=> $sibling_list
 	);
 	
-	echo $parser->render(
+	echo $oTwig->parser->render(
 		"@manual/chapter_page.lte",
 		$page_data
 	);
@@ -204,7 +205,7 @@ if(defined('CHAPTER_ID')) {
 		'chapter_tree' => $chapter_tree
 	);
 	
-	echo $parser->render(
+	echo $oTwig->parser->render(
 		"@manual/view.lte",
 		$page_data
 	);	
