@@ -12,29 +12,30 @@
 
 	{%	for chapter_id,chapter in chapter_list %}
 
-	<li class="context_{{ deep }}">
+	<li>
 		<!-- edit -->
-		<div class="manual_backend_table_action first">
+		<span class="manual_backend_table_action first">
 			<a href="{{ LEPTON_URL }}/modules/manual/modify_chapter.php?page_id={{ page_id }}&section_id={{ section_id }}&chapter_id={{ chapter.chapter_id }}&leptoken={{ leptoken }}" title="{{ TEXT.MODIFY }}">
 				<img src="{{ THEME_URL }}/images/modify_16.png" alt="Modify chapter" />
 			</a>
-		</div>
+		</span>
 		
 		<!-- title -->
-		<div class="manual_backend_table_title">
-			<a href="{{ LEPTON_URL }}/modules/manual/modify_chapter.php?page_id= {{ page_id }}&section_id={{ section_id }}&chapter_id={{ chapter.chapter_id }}&leptoken={{ leptoken }}" title="{{ TEXT.MODIFY }}">
-			{{ chapter.title }}
+		<span class="manual_backend_table_title">
+			<a href="{{ LEPTON_URL }}/modules/manual/modify_chapter.php?page_id= {{ page_id }}&section_id={{ section_id }}&chapter_id={{ chapter.chapter_id }}&leptoken={{ leptoken }}" title="{{ TEXT.MODIFY }}" >
+			[{{ chapter_id }}] {{ chapter.title }}
 			</a>
-		</div>
+		</span>
 		
+	<span class="manual_backend_action_group">	
 		<!-- active y/n -->
-		<div class="manual_backend_table_action">
+		<span class="manual_backend_table_action">
 			<img src="{{ THEME_URL }}/images/{% if(chapter.active == 1) %}ok_16.png{% else %}minus_16.png{% endif %}" />
-		</div>
+		</span>
 		
-		
-		<div class="manual_backend_table_action">
-			<!-- pos up -->
+		<!-- pos up -->
+		<span class="manual_backend_table_action">
+			
 			{% if( chapter.position-1 > 0) %}
 			<a href="{{ LEPTON_URL }}/modules/manual/move.php?page_id={{ page_id }}&section_id={{ section_id }}&chapter_id={{ chapter.chapter_id }}&pos={{ chapter.position - 1 }}">
 			<img src="{{ THEME_URL }}/images/up_16.png" />
@@ -42,8 +43,10 @@
 			{% else %}
 			<img src="{{ THEME_URL }}/images/blank.gif" style="width:16px;" />
 			{% endif %}
+		</span>
 		
-			<!-- pos down -->
+		<!-- pos down -->
+		<span class="manual_backend_table_action">	
 			{% if( chapter.position+1 <= loop.length) %}
 			<a href="{{ LEPTON_URL }}/modules/manual/move.php?page_id={{ page_id }}&section_id={{ section_id }}&chapter_id={{ chapter.chapter_id }}&pos={{ chapter.position + 1 }}">
 			<img src="{{ THEME_URL }}/images/down_16.png" />
@@ -51,28 +54,26 @@
 			{% else %}
 			<img src="{{ THEME_URL }}/images/blank.gif" style="width:16px;" />
 			{% endif %}
-		</div>
+		</span>
 		
 		<!-- delete -->
-		<div class="manual_backend_table_action">
+		<span class="manual_backend_table_action">
 			<a href="#" onclick="confirm_link('{{ chapter.are_you_sure }}', '{{ LEPTON_URL }}/modules/manual/delete_chapter.php?page_id={{ page_id }}&section_id={{ section_id }}&chapter_id={{ chapter.chapter_id }}');" title="{{ TEXT.DELETE }}">
 				<img src="{{ THEME_URL }}/images/delete_16.png" alt="X" />
 			</a>
-		</div>
+		</span>
+	</span>
+	
+		{% if (chapter.subchapters|length > 0) %}	
+			{% import _self as sub_here %}	
+			{{ sub_here.display_chapter( chapter.subchapters, (deep +1) ) }}	
+		{% endif %}
 	
 	</li>
 	
-	{% if (chapter.subchapters|length > 0) %}
-		<li>
-		
-		{% import _self as sub_here %}	
-		{{ sub_here.display_chapter( chapter.subchapters, (deep +1) ) }}
-		
-		</li> 
-	{% endif %}
-	
 	{% endfor %}
-</ul>
+	
+	</ul>
 
 {% endmacro %}
 

@@ -43,21 +43,24 @@ $mod_headers = array(
 			// 'modules/lib_jquery/jquery-core/jquery-core.min.js',
 			// 'modules/lib_jquery/jquery-core/jquery-migrate.min.js',
 			// 'modules/lib_jquery/jquery-ui/jquery-ui.min.js'
-			'modules/lib_semantic/dist/semantic.min.js'
+			// 'modules/lib_semantic/dist/semantic.min.js'
 			// "modules/Auto_Gallery/include/prettyPhoto/js/jquery-1.4.4.min.js",
 			// "modules/Auto_Gallery/include/prettyPhoto/js/jquery.prettyPhoto.js"
 			// "modules/manual/js/sortable/Sortable.min.js"
 			
 		),
 		'css'	=> array(
+		/*
 			array(
 				'media'	=> 'screen',
 				'file'	=> 'modules/lib_semantic/dist/semantic.min.css'
 			),
+		
 			array(
 				'media'	=> 'screen',
-				'file'	=> 'modules/manual/css/backend_semantic_add.css',
+				'file'	=> 'modules/manual/css/backend_ul.css',
 			)
+		*/ 
 		)
 	)
 );

@@ -18,13 +18,19 @@ div.manual_backend_table {
 ul.manual_backend_table_list {
 	display:table;
 	width:100%;
+	list-style-type: circle;
 }
 
 ul.manual_backend_table_list li {
-	border-bottom: 1px solid #DDDDDD;
 	background-color: #CCCCCC;
+	outline: 1px solid #009900;
+	display: table-cell;
 }
 
+ul.manual_backend_table_list li div {
+	display: table-cell;
+}
+/*
 ul.manual_backend_table_list li:last-child {
 	border-bottom: none;
 }
@@ -42,9 +48,7 @@ ul.manual_backend_table_list li {
 	display: inline-table;
 }
 
-ul.manual_backend_table_list li div {
-	display: table-cell;
-}
+
 
 ul.manual_backend_table_list li div.manual_backend_table_title {
 	min-width: 200px;
@@ -60,3 +64,4 @@ ul.manual_backend_table_list li div.manual_backend_table_action:first-child {
 	text-align: left;
 	padding-top: 5px;
 }
+*/

@@ -69,7 +69,7 @@ $page_values = array(
 );
 
 echo $oTwig->render(
-	"@manual/modify_semantic.lte",
+	"@manual/modify_ul.lte",
 	$page_values
 );
 
