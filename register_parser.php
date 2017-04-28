@@ -27,4 +27,9 @@ $oTwig->registerPath( LEPTON_PATH."/templates/".DEFAULT_THEME."/backend/".$modul
 $oTwig->registerPath( dirname(__FILE__)."/templates/backend/", $module_directory );
 $oTwig->registerPath( dirname(__FILE__)."/templates/", $module_directory );
 
+if(defined("PAGE_ID"))
+{
+	$page_template = $database->get_one("SELECT `template` FROM `".TABLE_PREFIX."pages` WHERE `page_id`=".PAGE_ID);
+	$oTwig->registerPath( LEPTON_PATH."/templates/".( $page_template == "" ? DEFAULT_TEMPLATE : $page_template)."/frontend/".$module_directory."/", $module_directory );
+}	
 ?>

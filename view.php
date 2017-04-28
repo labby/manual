@@ -62,7 +62,8 @@ if( 0 === count($all_chapters) )
  *	Get the template engine
  */
 require( dirname(__FILE__)."/register_parser.php" );
-	
+// $oTwig->registerPath( LEPTON_PATH."/templates/".DEFAULT_TEMPLATE."/frontend/manual/", "manual" );	
+
 // Check if we should show the "contents" page or the actual chapter
 if(defined('CHAPTER_ID')) {
 
