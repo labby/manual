@@ -68,7 +68,7 @@ if(file_exists( $full_path ))
 $full_path = LEPTON_PATH.PAGES_DIRECTORY.$root_page_link.$root."/";
 if(file_exists($full_path))
 {
-	LEPTON_tools::register("rm_full_dir");
+	LEPTON_handle::register("rm_full_dir");
 	rm_full_dir( $full_path );
 }
 
